@@ -1,0 +1,25 @@
+TRGOVALNE STRATEGIJE:
+http://www.financnitrgi.com/trgovanje/5-obveznih-korakov-da-si-oblikujete-dobro-trgovalno-strategijo
+
+http://www.cek.ef.uni-lj.si/magister/flajs4101.pdf prebrala do 1.4.1
+
+- SMA (simple moving average) 5, 25, 50, 150
+http://tradingsim.com/blog/simple-moving-average/
+I settled on the 5 and 10 period SMAs and simply bought as the 5 crossed above the 10 and sold short when the 5 crossed below the 10.
+The first thing to know is you want to pick two moving averages the are somehow related to each other.  For example, 10 is half of 20.  Or the 50 and 200 are the most popular moving averages for longer term investors.  The second thing is coming to understand the trigger for trading with moving average crossovers.  A buy or sell signal is triggered once the smaller moving average crosses above or below the larger moving average.
+
+http://www.investopedia.com/terms/s/sma.asp
+http://www.investopedia.com/video/play/sma-versus-ema/
+če je nad SMA kupiš, če je pod prodaš
+
+http://stockcharts.com/help/doku.php?id=chart_school:technical_indicators:moving_averages
+
+http://biz.yahoo.com/charts/guide11.html
+
+http://etfdb.com/2012/3-simple-moving-average-etf-trading-strategies/
+
+- RSI 2, 14
+- BUY & HOLD
+- RANDOM
+- OVERFIT
+- BOLINGER
