@@ -7,6 +7,9 @@ http://www.mypivots.com/article/details/40/using-excel-to-back-test-trading-stra
 
 http://www.youtube.com/watch?v=aaWLM60KxGg
 
+http://blog.fosstrading.com/2011/03/how-to-backtest-strategy-in-r.html
+
+
 - SMA (simple moving average) 5, 25, 50, 150
 http://tradingsim.com/blog/simple-moving-average/
 I settled on the 5 and 10 period SMAs and simply bought as the 5 crossed above the 10 and sold short when the 5 crossed below the 10.
