@@ -2,13 +2,16 @@
 ## Repliciran postopek iz članka (poglavje 2.2)
 
 setwd("C:/Users/Tina/Documents/faks/2. letnik magisterija/matematika z računalnikom/ProjektMZR")
-## funkcija, ki zgenerira txN matriko donosov:
+
+## funkcija, ki zgenerira TxN matriko donosov:
 matrikaDonosov = function(T, N) {
   matrix(data = rnorm(T*N), nrow = T, ncol = N)
 }
 
 M = matrikaDonosov(1000, 100)
 # kasneje mora biti M matrika donosov, ki jo dobiš iz svojih strategij
+
+S = 20
 
 ## matriko M razdelim na S podmatrik dimenzij T/S x N
 ## funkcija, ki pove, katere vrstice matrike M pripadajo podmatriki Ms, s = 1, ..., S
@@ -20,13 +23,12 @@ podmatrika = function(M, S, s){
 }
 
 ## vse možne kombinacije podmatrik matrike M, kjer izberemo S/2 podmatrik:
-## funkcija vrne matriko kjer je v vsaki vrstici ena možna kombinacija
-## podatek so s-ji
+## funkcija vrne matriko kjer je v vsakem stolpcu ena možna kombinacija podmatrik
+## vrednosti v matriki so zaporedne številke podmatrik Ms, oz. s-ji
 kombinacije = function(S) {
   combn(S, S/2)
 }
 
-S = 20
 Cs = kombinacije(S)
 
 ## za vsako kombinacijo c V Cs naredimo matriko J iz podmatrik, ki so v c
@@ -34,42 +36,106 @@ Cs = kombinacije(S)
 library(gdata)
 trainingSet = function(M, c){
   vrstice = unmatrix(sapply(c, podmatrika, M=M, S=length(c)*2))
-  names(vrstice) = NULL
+  names(vrstice) = NULL  
   vrstice
 }
 
-c = 2:11
-J = M[trainingSet(M, c), ]
+## za vsak stolpec v Cs izračunam trainingSet
+podmatrike = apply(Cs, MARGIN = 2, FUN = trainingSet, M = M)
+## podmatrike je T/2 x length(Cs) matrika
+## v vsakem stolpcu je vektor, ki pove katere vrstice v matriki M so v J pri dani kombinaciji
+
 
 ## preostale podmatrike, ki niso v c, damo v matriko Jbar
 ## funkcija, ki vrne katere vrstice iz M niso v J:
 testSet = function(M, c) {
   setdiff(1:nrow(M), trainingSet(M, c))
 }
-Jbar = M[testSet(M, c), ]
+
+## za vsak stolpec v Cs izračunam testSet
+komplement = apply(Cs, MARGIN = 2, FUN = testSet, M = M)
+## komplement je T/2 x length(Cs) matrika
+## v vsakem stolpcu je vektor, ki pove katere vrstice v matriki M niso v J oz. so v Jbar pri dani kombinaciji
+
 
 ## za vsak stolpec v J izračunam "performance statistics" -- vektor R
-## Sharpe Ratio: sharpe
+## Sharpe Ratio: apply(J, 1, sharpe)
 install.packages("tseries")
 library(tseries)
-R = apply(J, 1, sharpe)
 
-## določim kateri element v R ima največjo vrednost - katera strategija je najboljša IS
-n = which.max(R)
+# ## za vse možne J izračunam vektor R in jih zložim v matriko Rji po vrsticah
+# Rji = c()
+# for(i in 1:ncol(Cs)){
+#   if (i %in% seq(from = 1, to = ncol(Cs), by = 100)){
+#     print(i)
+#   }
+#   # najprej določim kaj je matrika J za en primer: M[stolpec v podmatrike, ]
+#   J = M[podmatrike[ , i], ]
+#   # za vsak stolpec v J izračunam sharpe ratio
+#   R = apply(J, 2, sharpe)
+#   Rji = rbind(Rji, R)
+# }
+
+# na stolpcih podmatrike komplement uporabim funkcijo, ki generira matriko J in izračuna njen R
+R = function(stolpec){
+  apply(M[stolpec, ], 2, sharpe)
+}
+
+Rji = apply(podmatrike, 2, R)
+# N x length(Cs) matrika - v vsakem solpcu je en R
+
+
+## za vsak vektor R določim kateri element v R ima največjo vrednost - katera strategija je najboljša IS
+## za vsak stolpec v Rji določim kateri je max, dobim vektor maksimumov
+nji = apply(Rji, 2, which.max)
+
 
 ## za vsak stolpec v Jbar izračunam "performance statistics" -- vektor Rbar
-Rbar = apply(Jbar, 1, sharpe)
+# ## za vse možne Jbar izračunam vektor Rbar in jih zložim v matriko Rbars po vrsticah
+# Rbars = c()
+# for(i in 1:ncol(Cs)){
+#   if (i %in% seq(from = 1, to = ncol(Cs), by = 100)){
+#     print(i)
+#   }
+#   # najprej določim kaj je matrika Jbar za en primer: M[stolpec v komplement, ]
+#   Jbar = M[komplement[ , i], ]
+#   # za vsak stolpec v Jbar izračunam sharpe ratio
+#   Rbar = apply(Jbar, 2, sharpe)
+#   Rbars = rbind(Rbars, Rbar)
+# }
+
+# na stolpcih podmatrike komplement uporabim funkcijo, ki generira matriko Jbar in izračuna njen Rbar
+Rbar = function(stolpec){
+  apply(M[stolpec, ], 2, sharpe)
+}
+
+Rbars = apply(komplement, 2, Rbar)
+# N x length(Cs) matrika - v vsakem solpcu je en Rbar
+
+############################
 
 ## določim relativni rank strategije n v Rbar:
-# rank(Rbar) = najmanjše število v Rbar ima najmanjši rank
-omega = rank(Rbar)[n]/length(Rbar)
+# rank(Rbar) -> najmanjše število v Rbar ima najmanjši rank
+# omega = rank(Rbar)[n]/length(Rbar)
+## za vsak stolpec v Rbars določim omego:
+w = function(Rbar, n){
+  rank(Rbar)[n]/length(Rbar)
+}
+
+Rbars = rbind(Rbars, nji)
+N = ncol(M)
+omega = apply(Rbars, 2, w, Rbar = Rbars[1:(N-1), ], n = Rbars[N, ])
+# vektor omeg
 
 ## definiram logit lambda:
-lambda = log(omega/(1-omega))
+lambda = function(omega){
+  log(omega/(1-omega))
+}
+
+L = apply(omega, lambda)
 
 ## porazdelitev lambd:
 ## za vsak c v Cs imam eno lambdo -- vektor L, izračunam relativno frekvenco za vsako lambdo:
-L = rnorm(choose(20,10)) # kasneje resnične lambde!
 f = table(L)/length(L) # relativna frekvenca za vsako različno lambdo
 sum(f)
 
