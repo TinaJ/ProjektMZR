@@ -1,7 +1,7 @@
 ## Metoda kombinatoričnega simetričnega preverjanja
 ## Repliciran postopek iz članka (poglavje 2.2)
 
-
+setwd("C:/Users/Tina/Documents/faks/2. letnik magisterija/matematika z računalnikom/ProjektMZR")
 ## funkcija, ki zgenerira txN matriko donosov:
 matrikaDonosov = function(T, N) {
   matrix(data = rnorm(T*N), nrow = T, ncol = N)
@@ -68,3 +68,13 @@ omega = rank(Rbar)[n]/length(Rbar)
 lambda = log(omega/(1-omega))
 
 ## porazdelitev lambd:
+## za vsak c v Cs imam eno lambdo -- vektor L, izračunam relativno frekvenco za vsako lambdo:
+L = rnorm(choose(20,10)) # kasneje resnične lambde!
+f = table(L)/length(L) # relativna frekvenca za vsako različno lambdo
+sum(f)
+
+## PBO = probabitily of backtest overfit
+## PBO lahko ocenim s tistimi lambdami, ki so negativne:
+negativne = names(f) < 0
+fi = sum(f[negativne])
+## fi = odstotek v katerem je optimalna strategija IS slabša od mediane OOS
