@@ -3,8 +3,7 @@
 
 setwd("C:/Users/Tina/Documents/faks/2. letnik magisterija/matematika z računalnikom/ProjektMZR")
 
-# TODO: preveri vse funkcije, če delajo, na simpel majhnem primeru!!
-
+############ VHODNI PODATKI: M in S
 ## funkcija, ki zgenerira TxN matriko donosov:
 matrikaDonosov = function(T, N) {
   matrix(data = rnorm(T*N), nrow = T, ncol = N)
@@ -15,6 +14,7 @@ M = matrikaDonosov(1000, 100)
 
 S = 20
 
+############# FUNKCIJE, KI DELAJO NA VHODNIH PODATKIH
 ## matriko M razdelim na S podmatrik dimenzij T/S x N
 ## funkcija, ki pove, katere vrstice matrike M pripadajo podmatriki Ms, s = 1, ..., S
 podmatrika = function(M, S, s){

@@ -7,23 +7,78 @@ setwd("C:/Users/Tina/Documents/faks/2. letnik magisterija/matematika z računaln
 # save(SP, file = "./SP13let.rda")
 load("./SP13let.rda")
 
-closePrice = SP[,4]
-closePrice$SMA5 = SMA(closePrice, n=5)
+library(TTR)
 
-# strategija: če je nad SMA in v downtrendu prodaj, če je pod SMA in v uptrendu kupi
-# uptrend: višje kot en dan prej
-# downtrend: nižje kot en dan prej
-# prodaj: -1
-# kupi: 1
-# sicer: 0
+data = SP[,4]
+colnames(data) = "close"
 
-strategija = function(price, SMA5){
-  if(price > SMA5 && price < price[-1]){
-    pozicija = -1
-  } elif(price < SMA5 && price > price[-1]){
-    pozicija = 1
-  } else
-    pozicija = 0
+
+# strategija: če je close prejšnjega dne nad SMA prejšnjega dne, kupi
+# vrednost, če kupiš je vrednos close tistega dne/close prejšnjega dne * vrednost prejšnjega dne
+# če ne kupiš, je vrednost enaka vrednosti prejšnjega dne
+
+n = 5
+data$SMA5 = SMA(data$close, n=n)
+data$vrednost5[n] = 1000
+for (i in (n+1) : nrow(data)){
+  if (i %in% seq(from = 1, to = nrow(data), by = 100)){
+    print(i)
+  }
+  data$trguj5[i] = data$close[i-1] > data$SMA5[i-1]
+  if (data$trguj5[i] == 1){
+    data$vrednost5[i] = (data$close[i]/data$close[i-1]) * data$vrednost5[i-1]
+  } 
+  else data$vrednost5[i] = data$vrednost5[i-1]
+  
+  data$profit5[i] = data$vrednost5[i] - data$vrednost5[i-1]
 }
 
-closePrice$position = 
+n = 25
+data$SMA25 = SMA(data$close, n=n)
+data$vrednost25[n] = 1000
+for (i in (n+1) : nrow(data)){
+  if (i %in% seq(from = 1, to = nrow(data), by = 100)){
+    print(i)
+  }
+  data$trguj25[i] = data$close[i-1] > data$SMA25[i-1]
+  if (data$trguj25[i] == 1){
+    data$vrednost25[i] = (data$close[i]/data$close[i-1]) * data$vrednost25[i-1]
+  } 
+  else data$vrednost25[i] = data$vrednost25[i-1]
+  
+  data$profit25[i] = data$vrednost25[i] - data$vrednost25[i-1]
+}
+
+n = 50
+data$SMA50 = SMA(data$close, n=n)
+data$vrednost50[n] = 1000
+for (i in (n+1) : nrow(data)){
+  if (i %in% seq(from = 1, to = nrow(data), by = 100)){
+    print(i)
+  }
+  data$trguj50[i] = data$close[i-1] > data$SMA50[i-1]
+  if (data$trguj50[i] == 1){
+    data$vrednost50[i] = (data$close[i]/data$close[i-1]) * data$vrednost50[i-1]
+  } 
+  else data$vrednost50[i] = data$vrednost50[i-1]
+  
+  data$profit[i] = data$vrednost50[i] - data$vrednost50[i-1]
+}
+
+n = 150
+data$SMA150 = SMA(data$close, n=n)
+data$vrednost150[n] = 1000
+for (i in (n+1) : nrow(data)){
+  if (i %in% seq(from = 1, to = nrow(data), by = 100)){
+    print(i)
+  }
+  data$trguj150[i] = data$close[i-1] > data$SMA150[i-1]
+  if (data$trguj150[i] == 1){
+    data$vrednost150[i] = (data$close[i]/data$close[i-1]) * data$vrednost150[i-1]
+  } 
+  else data$vrednost150[i] = data$vrednost150[i-1]
+  
+  data$profit150[i] = data$vrednost150[i] - data$vrednost150[i-1]
+}
+
+data

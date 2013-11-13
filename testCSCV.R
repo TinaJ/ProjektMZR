@@ -10,10 +10,10 @@ matrikaDonosov = function(T, N) {
   matrix(data = rnorm(T*N), nrow = T, ncol = N)
 }
 
-M = matrikaDonosov(1000, 100)
+M = matrikaDonosov(12, 5)
 # kasneje mora biti M matrika donosov, ki jo dobiš iz svojih strategij
 
-S = 20
+S = 4
 
 ## matriko M razdelim na S podmatrik dimenzij T/S x N
 ## funkcija, ki pove, katere vrstice matrike M pripadajo podmatriki Ms, s = 1, ..., S
@@ -23,6 +23,7 @@ podmatrika = function(M, S, s){
   b = st.vrstic * s
   a : b
 }
+podmatrika(M, S, 1)
 
 ## vse možne kombinacije podmatrik matrike M, kjer izberemo S/2 podmatrik:
 ## funkcija vrne matriko kjer je v vsakem stolpcu ena možna kombinacija podmatrik
