@@ -13,6 +13,9 @@ backtest strategy video:
 http://www.youtube.com/watch?v=JlAbU0880SU
 http://www.youtube.com/watch?v=YzmuAt9vdkQ&list=PLk0Ecq1e4JyH_azmWehWp1GQFEHJT0VN4
 
+BACKTESTING:
+http://budgeting.thenest.com/backtesting-vs-buyandhold-trading-strategies-23023.html
+http://marketsci.wordpress.com/2011/08/23/backtesting-in-excel/
 
 - SMA (simple moving average) 5, 25, 50, 150
 http://tradingsim.com/blog/simple-moving-average/
@@ -36,7 +39,19 @@ http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:rela
 
 http://www.tradestation.com/education/labs/analysis-concepts/relative-strength-index-strategy
 
+http://www.etoro.com/education/how-to-trade-an-rsi-strategy.aspx
+
 - BUY & HOLD
+kupi in nato nič ne trguj, računaj vrednosti
+
 - RANDOM
+na random se odloči a kupi al ne (mogoče a kupi, proda al pa nč?)
+http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0068344
+
+
 - OVERFIT
+
 - BOLINGER
+http://tradingsim.com/blog/bollinger-bands/
+http://www.youtube.com/watch?v=Q0Y3NcevC30
+kupi, ko gre pod spodnji pas, prodaj, ko gre čez zgornji pas
