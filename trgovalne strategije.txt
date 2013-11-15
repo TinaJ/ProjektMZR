@@ -9,6 +9,10 @@ http://www.youtube.com/watch?v=aaWLM60KxGg
 
 http://blog.fosstrading.com/2011/03/how-to-backtest-strategy-in-r.html
 
+backtest strategy video:
+http://www.youtube.com/watch?v=JlAbU0880SU
+http://www.youtube.com/watch?v=YzmuAt9vdkQ&list=PLk0Ecq1e4JyH_azmWehWp1GQFEHJT0VN4
+
 
 - SMA (simple moving average) 5, 25, 50, 150
 http://tradingsim.com/blog/simple-moving-average/
@@ -26,6 +30,12 @@ http://biz.yahoo.com/charts/guide11.html
 http://etfdb.com/2012/3-simple-moving-average-etf-trading-strategies/
 
 - RSI 2, 14
+http://www.investopedia.com/terms/r/rsi.asp
+
+http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:relative_strength_index_rsi
+
+http://www.tradestation.com/education/labs/analysis-concepts/relative-strength-index-strategy
+
 - BUY & HOLD
 - RANDOM
 - OVERFIT

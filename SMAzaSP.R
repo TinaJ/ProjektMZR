@@ -11,6 +11,8 @@ library(TTR)
 
 data = SP[,4]
 colnames(data) = "close"
+vrstnired = sort.list(rownames(data))
+data = data[vrstnired, ]
 
 
 # strategija: če je close prejšnjega dne nad SMA prejšnjega dne, kupi
