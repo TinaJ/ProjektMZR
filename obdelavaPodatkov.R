@@ -60,3 +60,24 @@ save(tabela, podatki5let, podatki10let,file="./podatki.rda")
 ## naložim podatke
 load("./podatki.rda")
 
+
+############################################################
+load("./podatki.rda")
+## delam na podatkih v spremenljivki tabela
+## za vsak papir potrebujem samo close ceno
+## naredim seznam imen papirjev, ki so v tabela:
+# prvi element vsakega elementa v seznamu:
+firstElement <- function(x){x[1]} ,
+# ločim imena stolpcev glede na piko in določim prvi element vsakega imena, vzamem samo eno ponovitev vsakega imena:
+imena = unique(sapply(strsplit(colnames(tabela),"\\."),firstElement))
+# imenom dodam ".Close"
+imena.Close = sapply(imena, paste0, ".Close")
+
+imena.Close %in% colnames(tabela)
+imena.Close[!(imena.Close %in% colnames(tabela))] # katera so v imena.Close in niso v tabeli
+# --> BRK.Close in BF.Close ## zakaj???
+imena.CloseOK = imena.Close[imena.Close %in% colnames(tabela)] # tisti papirji, ki imajo close vrednost v tabeli
+data = tabela[, imena.CloseOK] # za vsak papir, ki pride v poštev samo close vrednost
+save(data, file = "./CloseVrednosti2000.rda")
+
+##############################################################3

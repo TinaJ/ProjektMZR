@@ -18,12 +18,12 @@ value = function(trguj, closeDanes, closeVceraj, vrednostVceraj){
 
 # dobiček / izguba strategije = današnja vrednost - vrednost prejšnjega dne
 PandL = function(vrednostDanes, vrednostVceraj){
-  return(vrednsotDanes - vrednostVceraj)
+  return(vrednostDanes - vrednostVceraj)
 }
 
 ## DAILY PRICE CHANGE (donos??):
 # vrednost tistega dne / vrednost prejšnjega dne
-priceChange = function(vrednsotDanes, vrednosVceraj) {
+priceChange = function(vrednostDanes, vrednostVceraj) {
   return(vrednostDanes / vrednostVceraj)
 }
 
@@ -79,25 +79,35 @@ RSIstrategy = function(close, n, budget){
   averageLoss = c()
   RS = c()
   RSI = c()
+  trguj = c()
+  vrednost = c()
+  dobicekIzguba = c()
+  donos = c()
   
   # na začetku je vrednost strategije enaka denarju, ki ga imamo na razpolago (budget)
   vrednost[n] = budget
   
-  # izračunam izgubo/dobiček za prvih n dni:
+  # izračunam izgubo/dobiček za prvih n+1 dni:
   gainLoss = c()
-  for (i in 2:n){
+  for (i in 2:(n+1)){
     gainLoss[i] = close[i] - close[i-1]
   }
+  print(gainLoss)
   
   # izračunam prvi Average Gain, Average Lost in RSI - n-ti
-  averageGain[n] = sum(gainLoss[gainLoss > 0]) / n
-  averageLoss[n] = abs(sum(gainLoss[gainLoss < 0])) / n
+  averageGain[n] = sum(gainLoss[gainLoss > 0], na.rm = TRUE) / n
+  averageLoss[n] = abs(sum(gainLoss[gainLoss < 0], na.rm = TRUE)) / n
   RSI[n] = 100 + 100/(1 + averageGain[n] / averageLoss[n])
+  print(averageGain)
+  print(averageLoss)
+  print(RSI)
   
   # začnem pri dnevu n+1, ker sta za dneve 1:(n-1) averageGain in averageLoss enaka NA
   for (i in (n+1) : length(close)){
     # določim ali kupim ali ne naredim nič, glede na RSI prejšnjega dne
+    print(RSI[i-1])
     trguj[i] = RSI[i-1] < 30
+    print(trguj[i])
     
     # glede na to ali trgujem ali ne, določim vrednost
     vrednost[i] = value(trguj[i], close[i], close[i-1], vrednost[i-1])
@@ -158,7 +168,7 @@ BuyHoldStrategy = function(close, n, budget){
 ## SMA za n = 20
 ## STD = stadnardna deviacija na n podatkih
 ## faktor = 2
-BollingerStrategy = function(close, n, budget){
+BollingerStrategy = function(close, n, faktor, budget){
   # najprej izračunam SMA za dani n na close cenah
   SMAn = SMA(close, n = n)
   
