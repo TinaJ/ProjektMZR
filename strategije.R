@@ -2,6 +2,9 @@
 # v vseh strategijah samo kupujem, nič ne prodajam
 # mogoče bi bilo dobro implementirat še z prodajami (shortanje)?
 
+### POTREBNE KNJIŽNICE:
+library(TTR)
+
 ### VREDNOST STRATEGIJE:
 # če kupiš, je vrednost strategije close tistega dne / close prejšnjega dne * vrednost prejšnjega dne
 # če ne kupiš, je enaka vrednsoti prejšnjega dne
@@ -32,9 +35,12 @@ priceChange = function(vrednostDanes, vrednostVceraj) {
 ## 1. SMA = Simple Moving Average
 ## strategija: če je close prejšnjega dne nad SMA prejšnjega dne, kupi, če je pod, prodaj
 ## n = 5, 25, 50, 150
-SMAstrategy = function(close, n, budget){
-  # najprej izračunam SMA za dani n na close cenah
-  SMAn = SMA(close, n = n)
+SMAstrategy = function(close, SMAn, n, zacetek=1, budget = 1000){
+  ## close = vektor close cen
+  ## SMAn = vektor moving averages izračunanih na n podatkih
+  ## zacetek = dan s katerim začnem trgovati (kateri element v vektorju close je prvi)
+  ## n = dolžina moving averages
+  ## budget = znesek, ki ga vložimo v dani papir
   
   # predpripravim vektorje, ki jih bom potrebovala:
   trguj = c()
@@ -42,11 +48,19 @@ SMAstrategy = function(close, n, budget){
   dobicekIzguba = c()
   donos = c()
   
-  # na začetku je vrednost strategije enaka denarju, ki ga imamo na razpolago (budget)
-  vrednost[n] = budget
-  
+  # če začetek < n začnem pri n, drugače pri začetek
   # začnem pri dnevu n+1, ker za dneve 1:(n-1) je SMA enak NA
-  for (i in (n+1) : length(close)){
+  if (zacetek > n){
+    a = zacetek
+  }
+  else if (zacetek < n){
+    a = n
+  }
+  
+  # na začetku je vrednost strategije enaka denarju, ki ga imamo na razpolago (budget)
+  vrednost[a] = budget
+  
+  for (i in (a+1) : length(close)){
     # določim ali kupim ali ne naredim nič, glede na close in SMA
     trguj[i] = close[i-1] > SMAn[i-1]
     
@@ -61,7 +75,8 @@ SMAstrategy = function(close, n, budget){
   }
   
   # funkcija vrne matriko s stolpci close, SMA, trguj, vrednost, dobicekIzguba, donos
-  return(cbind(close, SMAn, trguj, vrednost, dobicekIzguba, donos))
+#   return(cbind(close, SMAn, trguj, vrednost, dobicekIzguba, donos))
+  return(dobicekIzguba)
 }
 
 ## 2. RSI = Relative Strength Index
@@ -73,41 +88,34 @@ SMAstrategy = function(close, n, budget){
 ## Average Gain = [(previous Average Gain) x (n-1) + current Gain] / n
 ## Average Loss = [(previous Average Loss) x (n-1) + current Loss] / n
 ## n = 2, 14
-RSIstrategy = function(close, n, budget){
-  # predpripravim vektorje, ki jih bom potrebovala
-  averageGain = c()
-  averageLoss = c()
-  RS = c()
-  RSI = c()
+RSIstrategy = function(close, RSIn, n, zacetek = 1, budget = 1000){
+  ## close = vektor close cen
+  ## RSIn = RSI indeks izračunan na dolžini n
+  ## zacetek = dan s katerim začnem trgovati (kateri element v vektorju close je prvi)
+  ## n = dolžina na kateri računam povprečno izgubo/dobiček
+  ## budget = znesek, ki ga vložimo v dani papir
+  
+  # predpripravim vektorje, ki jih bom potrebovala:
   trguj = c()
   vrednost = c()
   dobicekIzguba = c()
   donos = c()
   
-  # na začetku je vrednost strategije enaka denarju, ki ga imamo na razpolago (budget)
-  vrednost[n] = budget
-  
-  # izračunam izgubo/dobiček za prvih n+1 dni:
-  gainLoss = c()
-  for (i in 2:(n+1)){
-    gainLoss[i] = close[i] - close[i-1]
+  # če začetek < n začnem pri n, drugače pri začetek
+  # začnem pri dnevu n+1, ker za dneve 1:(n-1) je RSIn enak NA
+  if (zacetek > n + 1){
+    a = zacetek
   }
-  print(gainLoss)
+  else if (zacetek < n){
+    a = n + 1
+  }
   
-  # izračunam prvi Average Gain, Average Lost in RSI - n-ti
-  averageGain[n] = sum(gainLoss[gainLoss > 0], na.rm = TRUE) / n
-  averageLoss[n] = abs(sum(gainLoss[gainLoss < 0], na.rm = TRUE)) / n
-  RSI[n] = 100 + 100/(1 + averageGain[n] / averageLoss[n])
-  print(averageGain)
-  print(averageLoss)
-  print(RSI)
+  # na začetku je vrednost strategije enaka denarju, ki ga imamo na razpolago (budget)
+  vrednost[a] = budget
   
-  # začnem pri dnevu n+1, ker sta za dneve 1:(n-1) averageGain in averageLoss enaka NA
-  for (i in (n+1) : length(close)){
+  for (i in (a+1) : length(close)){
     # določim ali kupim ali ne naredim nič, glede na RSI prejšnjega dne
-    print(RSI[i-1])
-    trguj[i] = RSI[i-1] < 30
-    print(trguj[i])
+    trguj[i] = RSIn[i-1] < 30
     
     # glede na to ali trgujem ali ne, določim vrednost
     vrednost[i] = value(trguj[i], close[i], close[i-1], vrednost[i-1])
@@ -116,25 +124,19 @@ RSIstrategy = function(close, n, budget){
     dobicekIzguba[i] = PandL(vrednost[i], vrednost[i-1])
     
     # določim razliko v ceni/donos
-    donos[i] = priceChange(vrednost[i], vrednost[i-1])
-    
-    # določim gain, loss, averageGain, averageLoss in RSI na ta dan
-    gainLoss = close[i] - close[i-1]
-    # če je dobiček, ga dobim z sum(gainLoss[gainLoss > 0]), če je gainLoss < 0, je to enako 0
-    # če je izguba, jo dobim z abs(sum(gainLoss[gainLoss < 0])), če je gainLoss > 0, je to enako 0
-    averageGain[i] = (averageGain[i-1] * (n-1) + sum(gainLoss[gainLoss > 0])) / n
-    averageLoss[i] = (averageLoss[i-1] * (n-1) + abs(gainLoss[gainLoss < 0])) / n
-    
-    RSI[i] = 100 + 100/(1 + averageGain[i] / averageLoss[i])    
+    donos[i] = priceChange(vrednost[i], vrednost[i-1])     
   }
   
   # funkcija vrne matriko s stolpci close, RSI, trguj, vrednost, dobicekIzguba, donos
-  return(cbind(close, RSI, trguj, vrednost, dobicekIzguba, donos))
+#   return(cbind(close, RSI, trguj, vrednost, dobicekIzguba, donos))
+  return(dobicekIzguba)
 }
 
 ## 3. Buy & Hold
-BuyHoldStrategy = function(close, n, budget){
-  # tukaj je n+1 dan, ko začnem trgovati
+BuyHoldStrategy = function(close, zacetek = 1, budget = 1000){
+  ## close = vektor close cen
+  ## zacetek = dan s katerim začnem trgovati (kateri element v vektorju close je prvi)
+  ## budget = znesek, ki ga vložimo v dani papir
   
   # predpripravim vektorje, ki jih bom potrebovala:
   vrednost = c()
@@ -142,11 +144,10 @@ BuyHoldStrategy = function(close, n, budget){
   donos = c()
   
   # na začetku je vrednost strategije enaka denarju, ki ga imamo na razpolago (budget)
-  vrednost[n] = budget
+  vrednost[zacetek] = budget
   
   # začnem pri dnevu n+1
-  for (i in (n+1) : length(close)){
-    
+  for (i in (zacetek+1) : length(close)){   
     # določim vrednost buy & hold strategije (vedno trgujem)
     vrednost[i] = value(1, close[i], close[i-1], vrednost[i-1])
     
@@ -158,7 +159,8 @@ BuyHoldStrategy = function(close, n, budget){
   }
   
   # funkcija vrne matriko s stolpci close, vrednost, dobicekIzguba, donos
-  return(cbind(close, vrednost, dobicekIzguba, donos))
+#   return(cbind(close, vrednost, dobicekIzguba, donos))
+  return(dobicekIzguba)
 }
 
 ## 4. Bollinger
@@ -168,29 +170,33 @@ BuyHoldStrategy = function(close, n, budget){
 ## SMA za n = 20
 ## STD = stadnardna deviacija na n podatkih
 ## faktor = 2
-BollingerStrategy = function(close, n, faktor, budget){
-  # najprej izračunam SMA za dani n na close cenah
-  SMAn = SMA(close, n = n)
+BollingerStrategy = function(close, upBand, lowBand, n, zacetek = 1, budget = 1000){
+  ## close = vektor close cen
+  ## upBand = zgornji pas bollinger indeksa izračunanega na n podatkih
+  ## lowBand = spodnji pas bollinger indeksa izračunanega na n podatkih
+  ## zacetek = dan s katerim začnem trgovati (kateri element v vektorju close je prvi)
+  ## n = dolžina na kateri računam povprečno izgubo/dobiček
+  ## budget = znesek, ki ga vložimo v dani papir
   
   # predpripravim vektorje, ki jih bom potrebovala:
-  STD = c()
-  upBand = c()
-  lowBand = c()
   trguj = c()
   vrednost = c()
   dobicekIzguba = c()
   donos = c()
   
+  # če začetek < n začnem pri n, drugače pri začetek
+  # začnem pri dnevu n+1, ker za dneve 1:(n-1) je bollinger indeks enak NA
+  if (zacetek > n){
+    a = zacetek
+  }
+  else if (zacetek < n){
+    a = n
+  }
+  
   # na začetku je vrednost strategije enaka denarju, ki ga imamo na razpolago (budget)
-  vrednost[n] = budget
+  vrednost[a] = budget
   
-  # izračunam standardno deviacijo na prvih n podatkih ter lower band in upper band za n-ti dan
-  STD[n] = sd(close[1:n])
-  upBand[n] = SMAn[n] + faktor * STD[n]
-  lowBand[n] = SMAn[n] - faktor * STD[n]
-  
-  # začnem pri dnevu n+1, ker za dneve 1:(n-1) je SMA enak NA
-  for (i in (n+1) : length(close)){
+  for (i in (a+1) : length(close)){
     # določim ali kupim ali ne naredim nič, glede na close in lowBand
     trguj[i] = close[i-1] < lowBand[i-1]
     
@@ -202,24 +208,24 @@ BollingerStrategy = function(close, n, faktor, budget){
     
     # določim razliko v ceni/donos
     donos[i] = priceChange(vrednost[i], vrednost[i-1])
-    
-    # izračunam standardno deviacijo, lower band in upper band za ta dan
-    STD[i] = sd(close[(i-n+1):i])
-    upBand[i] = SMAn[i] + faktor * STD[i]
-    lowBand[i] = SMAn[i] - faktor * STD[i]    
   }
   
   # funkcija vrne matriko s stolpci close, SMA, trguj, vrednost, dobicekIzguba, donos
-  return(cbind(close, lowBand, trguj, vrednost, dobicekIzguba, donos))
+#   return(cbind(close, lowBand, trguj, vrednost, dobicekIzguba, donos))
+  return(dobicekIzguba)
 }
 
 
 
 ## 5. Random
 ## strategija: slučajno izberi ali kupiš, prodaš ali nič ne narediš
-randomStrategy = function(close, n, budget){
-  # tukaj je n+1 dan, ko začnem trgovati
+randomStrategy = function(close, seed = 1234, zacetek = 1, budget = 1000){
+  ## close = vektor close cen
+  ## seed nastavim, da je vsakič ist random rezultat, da lahko večkrat računam z istimi podatki
+  ## zacetek = dan s katerim začnem trgovati (kateri element v vektorju close je prvi)
+  ## budget = znesek, ki ga vložimo v dani papir
   
+  set.seed = seed
   # trguj je vektor ničel in enk, kjer je: verjetnost, da je 1 = verjetnosti, da je 0 = 1/2
   # trguj ~ bern(0.5) = bin(1, 0.5)
   trguj = rbinom(length(close), 1, 0.5)
@@ -230,10 +236,9 @@ randomStrategy = function(close, n, budget){
   donos = c()
   
   # na začetku je vrednost strategije enaka denarju, ki ga imamo na razpolago (budget)
-  vrednost[n] = budget
+  vrednost[zacetek] = budget
   
-  # začnem pri dnevu n+1
-  for (i in (n+1) : length(close)){    
+  for (i in (zacetek+1) : length(close)){    
     # določim vrednost strategije
     vrednost[i] = value(trguj[i], close[i], close[i-1], vrednost[i-1])
     
@@ -245,9 +250,22 @@ randomStrategy = function(close, n, budget){
   }
   
   # funkcija vrne matriko s stolpci close, vrednost, dobicekIzguba, donos
-  return(cbind(close, trguj, vrednost, dobicekIzguba, donos))
+#   return(cbind(close, trguj, vrednost, dobicekIzguba, donos))
+  return(dobicekIzguba)
 }
   
 
 ## 6. Overfit ??
 
+
+###################3 TESTIRANJE PRAVILNOSTI KODE STRATEGIJ
+SMAstrategy(1:100, SMA(1:100, 5), 5)
+SMAstrategy(1:100, SMA(1:100, 5), 5, zacetek = 23)
+RSIstrategy(1:100, RSI(1:100, 20), 20) 
+RSIstrategy(1:100, RSI(1:100, 20), 20, zacetek = 23) 
+BuyHoldStrategy(1:100)
+BuyHoldStrategy(1:100, zacetek = 23)
+BollingerStrategy(1:100, BBands(1:100)[, 3], BBands(1:100)[, 3], n = 20)
+BollingerStrategy(1:100, BBands(1:100)[, 3], BBands(1:100)[, 3], n = 20, zacetek = 23)
+randomStrategy(1:100)
+randomStrategy(1:100, zacetek = 23)
