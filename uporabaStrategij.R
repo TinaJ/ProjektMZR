@@ -15,41 +15,66 @@ RSI14= apply(data, 2, RSI, n = 14)
 bollinger = apply(data, 2, BBands, n = 20, sd = 2) 
 # => v isti stolpec zloži dn, mavg, up, pctB enega za drugim, ločit jih moraš
 
+# indekse shranim:
+save(SMA5, SMA25, SMA50, SMA150, RSI2, RSI14, bollinger, 
+     file = "./data/indeksi.rda")
+
 # najprej moraš pognati kodo v strategije.R
 
 # matrika izgub in dobička za vsak papir v data, za dane strategije
 # vsaka strategija ima svojo matriko, vsak stolpec v eni matriki je en papir
 
-## rabm funkcijo, ki iz dveh matrik vzame istoležne stolpce in na njih uporabi strategijo?!
+# začnem pri 150, ker imam SMA150, kjer je prvih 150 vrednosti enako NA???
+zacetek = 1
+budget = 1000
+PLSMA5 = sapply(1:ncol(data), 
+                function(i) SMAstrategy(data[ , i], SMA5[ , i], 5, zacetek, budget))
+PLSMA25 = sapply(1:ncol(data), 
+                 function(i) SMAstrategy(data[ , i], SMA25[ , i], 25, zacetek, budget))
+PLSMA50 = sapply(1:ncol(data), 
+                 function(i) SMAstrategy(data[ , i], SMA50[ , i], 50, zacetek, budget))
+PLSMA150 = sapply(1:ncol(data), 
+                  function(i) SMAstrategy(data[ , i], SMA150[ , i], 150, zacetek, budget))
 
+PLRSI2 = sapply(1:ncol(data), 
+                function(i) RSIstrategy(data[ , i], RSI2[ , i], 2, zacetek, budget))
+PLRSI14 = sapply(1:ncol(data), 
+                 function(i) RSIstrategy(data[ , i], RSI14[ , i], 14, zacetek, budget))
 
+PLbuyHold = sapply(1:ncol(data), 
+                   function(i) BuyHoldStrategy(data[,i], zacetek, budget))
 
-bollinger = apply(data5, 2, BollingerStrategy, n = 20, faktor = 2, budget = 1000)
-buyHold = apply(data5, 2, BuyHoldStrategy, n = 1, budget = 1000)
-RSI2 = apply(data5, 2, RSIstrategy, n = 2, budget = 1000)
-RSI14 = apply(data5, 2, RSIstrategy, n = 14, budget = 1000)
-SMA5 = apply(data5, 2, SMAstrategy, n = 5, budget = 1000)
-SMA25 = apply(data5, 2, SMAstrategy, n = 25, budget = 1000)
-SMA50 = apply(data5, 2, SMAstrategy, n = 50, budget = 1000)
-SMA150 = apply(data5, 2, SMAstrategy, n = 150, budget = 1000)
-random = apply(data5, 2, randomStrategy, n = 1, budget = 1000)
+PLbollinger = sapply(1:ncol(data), 
+                     function(i) BollingerStrategy(data[ , i], 
+                                                   bollinger[(2 * nrow(data)+1): (3 * nrow(data)), i], 
+                                                   bollinger[1:nrow(data) , i], 
+                                                   20, zacetek, budget))
 
-# povprečni donos papirjev za dane strategije
-avgBollinger = apply(bollinger, 1, mean, na.rm=TRUE)
-avgBuyHold = apply(buyHold, 1, mean, na.rm=TRUE)
-avgRSI2 = apply(RSI2, 1, mean, na.rm=TRUE)
-avgRSI14 = apply(RSI14, 1, mean, na.rm=TRUE)
-avgSMA5 = apply(SMA5, 1, mean, na.rm=TRUE)
-avgSMA25 = apply(SMA25, 1, mean, na.rm=TRUE)
-avgSMA50 = apply(SMA50, 1, mean, na.rm=TRUE)
-avgSMA150 = apply(SMA150, 1, mean, na.rm=TRUE)
-avgRandom = apply(random, 1, mean, na.rm=TRUE)
+PLrandom = sapply(1:ncol(data), 
+                  function(i) randomStrategy(data[,i], 1234, zacetek, budget))
 
-M = cbind(avgBollinger, avgBuyHold, avgRSI2, avgRSI14, avgSMA5, avgSMA25, 
-          avgSMA50, avgSMA150, avgRandom)
+# shranim dobičke/izgubo za vsak papir, za vsako strategijo
+save(PLSMA5, PLSMA25, PLSMA50, PLSMA150, PLRSI2, PLRSI14, PLbuyHold, PLbollinger, PLrandom, 
+     file = "./data/PLmatrike.rda")
 
-# prvih 150 vrstic dam preč, ker je pri SMA150 NA
-M = M[151:nrow(M), ]
+# vsota dobička/izgube vseh papirjev papirjev za dane strategije
+sumSMA5 = apply(PLSMA5, 1, sum, na.rm=TRUE)
+sumSMA25 = apply(PLSMA25, 1, sum, na.rm=TRUE)
+sumSMA50 = apply(PLSMA50, 1, sum, na.rm=TRUE)
+sumSMA150 = apply(PLSMA150, 1, sum, na.rm=TRUE)
 
+sumRSI2 = apply(PLRSI2, 1, sum, na.rm=TRUE)
+sumRSI14 = apply(PLRSI14, 1, sum, na.rm=TRUE)
 
-save(M, file = "./M.rda")
+sumBuyHold = apply(PLbuyHold, 1, sum, na.rm=TRUE)
+
+sumBollinger = apply(PLbollinger, 1, sum, na.rm=TRUE)
+
+sumRandom = apply(PLrandom, 1, sum, na.rm=TRUE)
+
+# te vsote združim v matriko M:
+M = cbind(sumSMA5, sumSMA25, sumSMA50, sumSMA150, 
+          sumRSI2, sumRSI14, sumBuyHold, sumBollinger, sumRandom)
+
+# matriko M shranim
+save(M, file = "./data/M.rda")

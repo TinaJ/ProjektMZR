@@ -55,3 +55,7 @@ http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0068344
 http://tradingsim.com/blog/bollinger-bands/
 http://www.youtube.com/watch?v=Q0Y3NcevC30
 kupi, ko gre pod spodnji pas, prodaj, ko gre čez zgornji pas
+
+
+- paket v R, ki računa indekse (SMA, RSI, Bolinger)
+http://cran.r-project.org/web/packages/TTR/TTR.pdf

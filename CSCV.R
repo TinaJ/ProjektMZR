@@ -4,13 +4,17 @@
 setwd("C:/Users/Tina/Documents/faks/2. letnik magisterija/matematika z računalnikom/ProjektMZR")
 
 ############ VHODNI PODATKI: M in S
-## funkcija, ki zgenerira TxN matriko donosov:
-matrikaDonosov = function(T, N) {
-  matrix(data = rnorm(T*N), nrow = T, ncol = N)
-}
+# ## funkcija, ki zgenerira TxN matriko donosov:
+# matrikaDonosov = function(T, N) {
+#   matrix(data = rnorm(T*N), nrow = T, ncol = N)
+# }
+# 
+# M = matrikaDonosov(1000, 100)
+# # kasneje mora biti M matrika donosov, ki jo dobiš iz svojih strategij
 
-M = matrikaDonosov(1000, 100)
-# kasneje mora biti M matrika donosov, ki jo dobiš iz svojih strategij
+# matrika P&L:
+load("./M.rda")
+dim(M)
 
 S = 20
 
@@ -62,7 +66,7 @@ komplement = apply(Cs, MARGIN = 2, FUN = testSet, M = M)
 
 ## za vsak stolpec v J izračunam "performance statistics" -- vektor R
 ## Sharpe Ratio: apply(J, 1, sharpe)
-install.packages("tseries")
+# install.packages("tseries")
 library(tseries)
 
 # ## za vse možne J izračunam vektor R in jih zložim v matriko Rji po vrsticah
@@ -152,4 +156,10 @@ negativne = names(f) < 0
 fi = sum(f[negativne])
 ## fi = odstotek v katerem je optimalna strategija IS slabša od mediane OOS
 fi
+## => dobila sem fi = 0.5888441 
+## => the optimal IS strategy underperformed as many trials as it outperformed
+## => backtests are overfit to the point that the strategy selection procedure does not add value
 
+
+## SHRANIM VSE ZGENERIRANE SPREMENLJIVKE:
+save(Cs, podmatrike, komplement, Rji, nji, Rbars, omega, L, f, fi, file = "./data/sprem1.rda")

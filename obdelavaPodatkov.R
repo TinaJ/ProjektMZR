@@ -10,7 +10,7 @@ close(con)
 
 ## če še nimam podatkov, potegnem podatke za teh 500 papirjev iz yahooja in jih shranim v SP500.rda
 # SP500 = yahooSeries(papirji, from = "2000-01-01", to = "2013-11-01")
-# save(SP500,file="./SP500.rda")
+# save(SP500,file=".data//SP500.rda")
 
 ## naložim podatke iz SP500.rda, če jih že imam shranjene - spremenjlivka SP500
 load("./SP500.rda")
@@ -66,6 +66,10 @@ sum(anyNA)
 ## vržem vn:
 data = podatki2[apply(podatki2, 1, function(x) sum(is.na(x)) == 0), ]
 
+## interpoliram NA:
+# data = interpNA(podatki2, method = "before")
+# # tri vrednosti so še zmerej NA !?!?!?
+
 ## shranim obdelane podatke v data.rda
-save(data,file="./data.rda")
+save(data,file="./data/data.rda")
 
