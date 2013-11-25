@@ -13,10 +13,15 @@ setwd("C:/Users/Tina/Documents/faks/2. letnik magisterija/matematika z računaln
 # # kasneje mora biti M matrika donosov, ki jo dobiš iz svojih strategij
 
 # matrika P&L:
-load("./M.rda")
+load("./data/M.rda")
 dim(M)
 
 S = 20
+
+# ker št. vrstic matrike M ni deljvo z 20, na random izberem 3320 vrstic
+a = sample(1:nrow(M), 3320, replace = FALSE, prob = NULL)
+a = a[order(a)]
+M = M[a, ]
 
 ############# FUNKCIJE, KI DELAJO NA VHODNIH PODATKIH
 ## matriko M razdelim na S podmatrik dimenzij T/S x N
@@ -162,4 +167,7 @@ fi
 
 
 ## SHRANIM VSE ZGENERIRANE SPREMENLJIVKE:
-save(Cs, podmatrike, komplement, Rji, nji, Rbars, omega, L, f, fi, file = "./data/sprem1.rda")
+save(Cs, podmatrike, komplement, Rji, nji, Rbars, omega, L, f, fi, file = "./data/sprem2.rda")
+
+#in vhodne podatke:
+save(M, S, file  ="./data/vhodne.rda")

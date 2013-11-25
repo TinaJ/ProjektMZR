@@ -53,7 +53,7 @@ SMAstrategy = function(close, SMAn, n, zacetek=1, budget = 1000){
   if (zacetek > n){
     a = zacetek
   }
-  else if (zacetek < n){
+  else if (zacetek <= n){
     a = n
   }
   
@@ -67,16 +67,16 @@ SMAstrategy = function(close, SMAn, n, zacetek=1, budget = 1000){
     # glede na to ali trgujem ali ne, določim vrednost
     vrednost[i] = value(trguj[i], close[i], close[i-1], vrednost[i-1])
     
-    # določim dobiček/izgubo
-    dobicekIzguba[i] = PandL(vrednost[i], vrednost[i-1])
-    
-    # določim razliko v ceni/donos
-    donos[i] = priceChange(vrednost[i], vrednost[i-1])
+#     # določim dobiček/izgubo
+#     dobicekIzguba[i] = PandL(vrednost[i], vrednost[i-1])
+#     
+#     # določim razliko v ceni/donos
+#     donos[i] = priceChange(vrednost[i], vrednost[i-1])
   }
   
   # funkcija vrne matriko s stolpci close, SMA, trguj, vrednost, dobicekIzguba, donos
 #   return(cbind(close, SMAn, trguj, vrednost, dobicekIzguba, donos))
-  return(dobicekIzguba)
+  return(vrednost)
 }
 
 ## 2. RSI = Relative Strength Index
@@ -120,16 +120,16 @@ RSIstrategy = function(close, RSIn, n, zacetek = 1, budget = 1000){
     # glede na to ali trgujem ali ne, določim vrednost
     vrednost[i] = value(trguj[i], close[i], close[i-1], vrednost[i-1])
     
-    # določim dobiček/izgubo
-    dobicekIzguba[i] = PandL(vrednost[i], vrednost[i-1])
-    
-    # določim razliko v ceni/donos
-    donos[i] = priceChange(vrednost[i], vrednost[i-1])     
+#     # določim dobiček/izgubo
+#     dobicekIzguba[i] = PandL(vrednost[i], vrednost[i-1])
+#     
+#     # določim razliko v ceni/donos
+#     donos[i] = priceChange(vrednost[i], vrednost[i-1])     
   }
   
   # funkcija vrne matriko s stolpci close, RSI, trguj, vrednost, dobicekIzguba, donos
 #   return(cbind(close, RSI, trguj, vrednost, dobicekIzguba, donos))
-  return(dobicekIzguba)
+  return(vrednost)
 }
 
 ## 3. Buy & Hold
@@ -151,16 +151,16 @@ BuyHoldStrategy = function(close, zacetek = 1, budget = 1000){
     # določim vrednost buy & hold strategije (vedno trgujem)
     vrednost[i] = value(1, close[i], close[i-1], vrednost[i-1])
     
-    # določim dobiček/izgubo
-    dobicekIzguba[i] = PandL(vrednost[i], vrednost[i-1])
-    
-    # določim razliko v ceni/donos
-    donos[i] = priceChange(vrednost[i], vrednost[i-1])
+#     # določim dobiček/izgubo
+#     dobicekIzguba[i] = PandL(vrednost[i], vrednost[i-1])
+#     
+#     # določim razliko v ceni/donos
+#     donos[i] = priceChange(vrednost[i], vrednost[i-1])
   }
   
   # funkcija vrne matriko s stolpci close, vrednost, dobicekIzguba, donos
 #   return(cbind(close, vrednost, dobicekIzguba, donos))
-  return(dobicekIzguba)
+  return(vrednost)
 }
 
 ## 4. Bollinger
@@ -203,16 +203,16 @@ BollingerStrategy = function(close, upBand, lowBand, n, zacetek = 1, budget = 10
     # glede na to ali trgujem ali ne, določim vrednost
     vrednost[i] = value(trguj[i], close[i], close[i-1], vrednost[i-1])
     
-    # določim dobiček/izgubo
-    dobicekIzguba[i] = PandL(vrednost[i], vrednost[i-1])
-    
-    # določim razliko v ceni/donos
-    donos[i] = priceChange(vrednost[i], vrednost[i-1])
+#     # določim dobiček/izgubo
+#     dobicekIzguba[i] = PandL(vrednost[i], vrednost[i-1])
+#     
+#     # določim razliko v ceni/donos
+#     donos[i] = priceChange(vrednost[i], vrednost[i-1])
   }
   
   # funkcija vrne matriko s stolpci close, SMA, trguj, vrednost, dobicekIzguba, donos
 #   return(cbind(close, lowBand, trguj, vrednost, dobicekIzguba, donos))
-  return(dobicekIzguba)
+  return(vrednost)
 }
 
 
@@ -242,16 +242,16 @@ randomStrategy = function(close, seed = 1234, zacetek = 1, budget = 1000){
     # določim vrednost strategije
     vrednost[i] = value(trguj[i], close[i], close[i-1], vrednost[i-1])
     
-    # določim dobiček/izgubo
-    dobicekIzguba[i] = PandL(vrednost[i], vrednost[i-1])
-    
-    # določim razliko v ceni/donos
-    donos[i] = priceChange(vrednost[i], vrednost[i-1])
+#     # določim dobiček/izgubo
+#     dobicekIzguba[i] = PandL(vrednost[i], vrednost[i-1])
+#     
+#     # določim razliko v ceni/donos
+#     donos[i] = priceChange(vrednost[i], vrednost[i-1])
   }
   
   # funkcija vrne matriko s stolpci close, vrednost, dobicekIzguba, donos
 #   return(cbind(close, trguj, vrednost, dobicekIzguba, donos))
-  return(dobicekIzguba)
+  return(vrednost)
 }
   
 
@@ -259,13 +259,13 @@ randomStrategy = function(close, seed = 1234, zacetek = 1, budget = 1000){
 
 
 ###################3 TESTIRANJE PRAVILNOSTI KODE STRATEGIJ
-SMAstrategy(1:100, SMA(1:100, 5), 5)
-SMAstrategy(1:100, SMA(1:100, 5), 5, zacetek = 23)
-RSIstrategy(1:100, RSI(1:100, 20), 20) 
-RSIstrategy(1:100, RSI(1:100, 20), 20, zacetek = 23) 
-BuyHoldStrategy(1:100)
-BuyHoldStrategy(1:100, zacetek = 23)
-BollingerStrategy(1:100, BBands(1:100)[, 3], BBands(1:100)[, 3], n = 20)
-BollingerStrategy(1:100, BBands(1:100)[, 3], BBands(1:100)[, 3], n = 20, zacetek = 23)
-randomStrategy(1:100)
-randomStrategy(1:100, zacetek = 23)
+# SMAstrategy(1:100, SMA(1:100, 5), 5)
+# SMAstrategy(1:100, SMA(1:100, 5), 5, zacetek = 23)
+# RSIstrategy(1:100, RSI(1:100, 20), 20) 
+# RSIstrategy(1:100, RSI(1:100, 20), 20, zacetek = 23) 
+# BuyHoldStrategy(1:100)
+# BuyHoldStrategy(1:100, zacetek = 23)
+# BollingerStrategy(1:100, BBands(1:100)[, 3], BBands(1:100)[, 3], n = 20)
+# BollingerStrategy(1:100, BBands(1:100)[, 3], BBands(1:100)[, 3], n = 20, zacetek = 23)
+# randomStrategy(1:100)
+# randomStrategy(1:100, zacetek = 23)
