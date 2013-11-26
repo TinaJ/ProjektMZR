@@ -5,7 +5,7 @@ library(fImport)
 
 ########## PODATKI ZA INDEKS SP500
 ## če še nimam, naložim podatke za SP500 indeks
- SP = yahooSeries("^GSPC", from = "2000-01-01", to = "2013-11-01")
+SP = yahooSeries("^GSPC", from = "2000-01-01", to = "2013-11-01")
 
 # potrebujem samo close vrednosti:
 SP = SP[, 1]
@@ -40,63 +40,93 @@ summary(podatki)
 str(podatki)
 head(podatki)
 
-## pogledam kateri papirji imajo več kot 10 NA-jev:
-NA10 = apply(podatki, 2, function(x) sum(is.na(x)) > 10)
-sum(NA10)
-colnames(podatki)[NA10]
-## 88 je takih
+###### NOVO
+# pogledam ker ima tri NA skupaj, ker to ne moreš interpolirat:
+a = c()
 
-## nekaj o teh 88 papirjih
-summary(podatki[, NA10])
-head(podatki[, NA10])
+for (i in 1:ncol(podatki)){
+  print(i)
+  if (sum(is.na(podatki[,i])) > 2) {
+    print("bla")
+    for (j in 3:nrow(podatki)){
+      if (is.na(podatki[j, i]) && is.na(podatki[j-1, i]) && is.na(podatki[j-2, i])){
+        a = append(a, i)
+        break
+      }
+    }
+  }
+}
 
-## papirji, ki imajo med 10 in 100 NAjev
-NA100 = apply(podatki, 2, function(x) sum(is.na(x)) > 10 && sum(is.na(x)) < 100)
-sum(NA100)
+# odstranim tistih 89 papirjev, ki imajo 3 NA skupaj
+podatki = podatki[, -a]
+# ostale NA interpoliram
+podatki = interpNA(podatki)
 
-summary(podatki[, NA100])
-head(podatki[, NA100], 50)
+save(podatki, file = "./data/podatki.rda")
 
-## pogledam kateri papirji imajo kakšen NA:
-anyNA =  apply(podatki, 2, function(x) sum(is.na(x)) > 0)
-sum(anyNA)
+load("./data/podatki.rda")
 
-## obdržim samo papirje, ki imajo manj kot 10 NA-jev
-podatki2 = podatki[, apply(podatki, 2, function(x) sum(is.na(x)) < 10)]
-ncol(podatki2)
+######
 
-## ostanejo mi podatki za 412 papirjev
-sum(is.na(podatki2))
-# imam 1413 NA-jev
 
-## pogledam če je kakšen dan, kjer so skoraj vsi papirji NA:
-datumNA = apply(podatki2, 1, function(x) sum(is.na(x)) > 300)
-sum(datumNA)
-
-## pogledam koliko dni ima kakšne NA:
-anyNA = apply(podatki2, 1, function(x) sum(is.na(x)) > 0)
-sum(anyNA)
-# takih dni je 21
-
-## vržem te dni ven ali nadomestim NA z ???????????
-## vržem vn:
-# data = podatki2[apply(podatki2, 1, function(x) sum(is.na(x)) == 0), ]
-
-## interpoliram NA:
-data = interpNA(podatki2, method = "before")
-sum(is.na(data))
-for (i in 1:412){if(sum(is.na(data[,i]))>0){print(i)}}
-which(is.na(data[,120]))
-colnames(data)[120]
-# # tri vrednosti so še zmerej NA -> DELL ima zadnje 3 dni NA
-# => vzamem vse razen zadnjih treh vrstic
-data = data[-c(3479,3480,3481), ]
-dim(data)
-
-## shranim obdelane podatke v data.rda
-save(data,file="./data/data.rda")
-
-############# SHRANJENI PODATKI:
-load("./data/SP.rda")
-load("./data/SP500.rda")
-load("./data/data.rda")
+# ## pogledam kateri papirji imajo več kot 10 NA-jev:
+# NA10 = apply(podatki, 2, function(x) sum(is.na(x)) > 10)
+# sum(NA10)
+# colnames(podatki)[NA10]
+# ## 88 je takih
+# 
+# ## nekaj o teh 88 papirjih
+# summary(podatki[, NA10])
+# head(podatki[, NA10])
+# 
+# ## papirji, ki imajo med 10 in 100 NAjev
+# NA100 = apply(podatki, 2, function(x) sum(is.na(x)) > 10 && sum(is.na(x)) < 100)
+# sum(NA100)
+# 
+# summary(podatki[, NA100])
+# head(podatki[, NA100], 50)
+# 
+# ## pogledam kateri papirji imajo kakšen NA:
+# anyNA =  apply(podatki, 2, function(x) sum(is.na(x)) > 0)
+# sum(anyNA)
+# 
+# ## obdržim samo papirje, ki imajo manj kot 10 NA-jev
+# podatki2 = podatki[, apply(podatki, 2, function(x) sum(is.na(x)) < 10)]
+# ncol(podatki2)
+# 
+# ## ostanejo mi podatki za 412 papirjev
+# sum(is.na(podatki2))
+# # imam 1413 NA-jev
+# 
+# ## pogledam če je kakšen dan, kjer so skoraj vsi papirji NA:
+# datumNA = apply(podatki2, 1, function(x) sum(is.na(x)) > 300)
+# sum(datumNA)
+# 
+# ## pogledam koliko dni ima kakšne NA:
+# anyNA = apply(podatki2, 1, function(x) sum(is.na(x)) > 0)
+# sum(anyNA)
+# # takih dni je 21
+# 
+# ## vržem te dni ven ali nadomestim NA z ???????????
+# ## vržem vn:
+# # data = podatki2[apply(podatki2, 1, function(x) sum(is.na(x)) == 0), ]
+# 
+# ## interpoliram NA:
+# data = interpNA(podatki2, method = "before")
+# sum(is.na(data))
+# for (i in 1:412){if(sum(is.na(data[,i]))>0){print(i)}}
+# which(is.na(data[,120]))
+# colnames(data)[120]
+# # # tri vrednosti so še zmerej NA -> DELL ima zadnje 3 dni NA
+# # => vzamem vse razen zadnjih treh vrstic
+# data = data[-c(3479,3480,3481), ]
+# dim(data)
+# 
+# ## shranim obdelane podatke v data.rda
+# save(data,file="./data/data.rda")
+# 
+# ############# SHRANJENI PODATKI:
+ load("./data/SP.rda")
+ load("./data/SP500.rda")
+# load("./data/data.rda")
+load("./data/podatki.rda")

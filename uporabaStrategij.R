@@ -1,7 +1,9 @@
 setwd("C:/Users/Tina/Documents/faks/2. letnik magisterija/matematika z računalnikom/ProjektMZR")
 
 # podatki za close vrednost za vse papirje, ki so dovolj dolgo v S&P, od 3.1.2000 do 1.11.2013
-load("./data/data.rda")
+# load("./data/data.rda")
+load("./data/podatki.rda")
+data = podatki
 
 # za podatke izračunam indekse: SMA5, 25, 50, 150, RSI 2, 14, bollinger za n = 20 in faktor = 2
 SMA5 = apply(data, 2, SMA, n = 5)
