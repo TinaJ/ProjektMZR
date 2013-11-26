@@ -18,10 +18,8 @@ dim(M)
 
 S = 20
 
-# ker št. vrstic matrike M ni deljvo z 20, na random izberem 3320 vrstic
-a = sample(1:nrow(M), 3320, replace = FALSE, prob = NULL)
-a = a[order(a)]
-M = M[a, ]
+# ker št. vrstic matrike M (3330) ni deljvo z 20, vržem vn zadnjih 10 vrstic
+M = M[1:3320, ]
 
 ############# FUNKCIJE, KI DELAJO NA VHODNIH PODATKIH
 ## matriko M razdelim na S podmatrik dimenzij T/S x N

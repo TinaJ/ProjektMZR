@@ -219,13 +219,12 @@ BollingerStrategy = function(close, upBand, lowBand, n, zacetek = 1, budget = 10
 
 ## 5. Random
 ## strategija: slučajno izberi ali kupiš, prodaš ali nič ne narediš
-randomStrategy = function(close, seed = 1234, zacetek = 1, budget = 1000){
+randomStrategy = function(close, zacetek = 1, budget = 1000){
   ## close = vektor close cen
   ## seed nastavim, da je vsakič ist random rezultat, da lahko večkrat računam z istimi podatki
   ## zacetek = dan s katerim začnem trgovati (kateri element v vektorju close je prvi)
   ## budget = znesek, ki ga vložimo v dani papir
   
-  set.seed = seed
   # trguj je vektor ničel in enk, kjer je: verjetnost, da je 1 = verjetnosti, da je 0 = 1/2
   # trguj ~ bern(0.5) = bin(1, 0.5)
   trguj = rbinom(length(close), 1, 0.5)

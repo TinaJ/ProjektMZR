@@ -54,7 +54,7 @@ PLbollinger = sapply(1:ncol(data),
                                                    20, zacetek, budget))
 
 PLrandom = sapply(1:ncol(data), 
-                  function(i) randomStrategy(data[,i], 1234, zacetek, budget))
+                  function(i) randomStrategy(data[,i], zacetek, budget))
 
 # shranim vrednosti za vsak papir, za vsako strategijo
 save(PLSMA5, PLSMA25, PLSMA50, PLSMA150, PLRSI2, PLRSI14, PLbuyHold, PLbollinger, PLrandom, 
@@ -117,7 +117,7 @@ B_SP = BBands(SP, n = 20)
 bollinger_SP = BollingerStrategy(SP, B_SP[(2 * nrow(SP)+1): (3 * nrow(SP))], 
                                  B_SP[1:nrow(SP)], 20, zacetek, budget*ncol(data))
 
-random_SP = randomStrategy(SP, 1234, zacetek, budget*ncol(data))
+random_SP = randomStrategy(SP, zacetek, budget*ncol(data))
 
 # vrednosti združim v matriko M_SP:
 M_SP = cbind(SMA5_SP, SMA25_SP, SMA50_SP, SMA150_SP, 
@@ -138,3 +138,4 @@ load("./data/Mvrednost.rda")
 load("./data/Mdonos.rda")
 load("./data/M_SP.rda")
 load("./data/M_SP_donos.rda")
+load("./data/M.rda")
