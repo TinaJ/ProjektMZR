@@ -50,7 +50,7 @@ trainingSet = function(M, c){
 }
 
 ## za vsak stolpec v Cs izračunam trainingSet
-podmatrike = apply(Cs, MARGIN = 2, FUN = trainingSet, M = M)
+# podmatrike = apply(Cs, MARGIN = 2, FUN = trainingSet, M = M)  ## ne shranim v spremenljivko, ampak kasneje samo uporabim, ker drugače zavzame preveč spomina
 ## podmatrike je T/2 x length(Cs) matrika
 ## v vsakem stolpcu je vektor, ki pove katere vrstice v matriki M so v J pri dani kombinaciji
 
@@ -62,7 +62,7 @@ testSet = function(M, c) {
 }
 
 ## za vsak stolpec v Cs izračunam testSet
-komplement = apply(Cs, MARGIN = 2, FUN = testSet, M = M)
+# komplement = apply(Cs, MARGIN = 2, FUN = testSet, M = M) ## ne shranim v spremenljivko, ampak kasneje samo uporabim, ker drugače zavzame preveč spomina
 ## komplement je T/2 x length(Cs) matrika
 ## v vsakem stolpcu je vektor, ki pove katere vrstice v matriki M niso v J oz. so v Jbar pri dani kombinaciji
 
@@ -86,11 +86,16 @@ library(tseries)
 # }
 
 # na stolpcih podmatrike komplement uporabim funkcijo, ki generira matriko J in izračuna njen R
+# R = function(stolpec){
+#   apply(M[stolpec, ], 2, sharpe)
+# }
+
+# ne uporabim vgrajenega sharpa, ker so drugačni rezultati!!??
 R = function(stolpec){
-  apply(M[stolpec, ], 2, sharpe)
+  apply(M[stolpec, ], 2, function(x) mean(x)/sd(x))
 }
 
-Rji = apply(podmatrike, 2, R)
+Rji = apply(apply(Cs, MARGIN = 2, FUN = trainingSet, M = M), 2, R)
 # N x length(Cs) matrika - v vsakem solpcu je en R
 
 
@@ -114,11 +119,17 @@ nji = apply(Rji, 2, which.max)
 # }
 
 # na stolpcih podmatrike komplement uporabim funkcijo, ki generira matriko Jbar in izračuna njen Rbar
-Rbar = function(stolpec){
-  apply(M[stolpec, ], 2, sharpe)
-}
+# Rbar = function(stolpec){
+#   apply(M[stolpec, ], 2, sharpe)
+# }
 
-Rbars = apply(komplement, 2, Rbar)
+# ne uporabim vgrajenega sharpa, ker so drugačni rezultati!!??
+# Rbar = function(stolpec){
+#   apply(M[stolpec, ], 2, function(x) mean(x)/sd(x))
+# }
+# ==> Rbar je enaka funkcija kot R
+
+Rbars = apply(apply(Cs, MARGIN = 2, FUN = testSet, M = M), 2, R)
 # N x length(Cs) matrika - v vsakem solpcu je en Rbar
 
 
@@ -128,6 +139,7 @@ Rbars = apply(komplement, 2, Rbar)
 ## za vsak stolpec v Rbars določim omego:
 omega = c()
 for(i in 1:ncol(Rbars)){
+  print(i)
   w = rank(Rbars[ , i])[nji[i]]/length(Rbars[ , i])
   omega = c(omega, w)
 }
@@ -159,13 +171,27 @@ negativne = names(f) < 0
 fi = sum(f[negativne])
 ## fi = odstotek v katerem je optimalna strategija IS slabša od mediane OOS
 fi
-## => dobila sem fi = 0.5888441 
+## => dobila sem fi = 0.4628754 
 ## => the optimal IS strategy underperformed as many trials as it outperformed
 ## => backtests are overfit to the point that the strategy selection procedure does not add value
 
 
 ## SHRANIM VSE ZGENERIRANE SPREMENLJIVKE:
-save(Cs, podmatrike, komplement, Rji, nji, Rbars, omega, L, f, fi, file = "./data/sprem2.rda")
+# save(Cs, Rji, nji, Rbars, omega, L, f, fi, file = "./data/sprem.rda")
+
+# nevgrajeni sharpe:
+save(Cs, Rji, nji, Rbars, omega, L, f, fi, file = "./data/sprem2.rda")
 
 #in vhodne podatke:
-save(M, S, file  ="./data/vhodne.rda")
+# save(M, S, file  ="./data/vhodne.rda")
+
+# nevgrajeni sharpe:
+save(M, S, file  ="./data/vhodne2.rda")
+
+
+#### SHRANJENE DEATOTEKE
+load("./data/sprem.rda")
+load("./data/vhodne.rda")
+
+load("./data/sprem2.rda")
+load("./data/vhodne2.rda")
