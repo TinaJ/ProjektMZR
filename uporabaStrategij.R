@@ -1,11 +1,31 @@
+### UPORABIM STRATEGIJE NA PAPIRJIH, KI SO V  INDEKSU SP 500 in na samam indeksu SP
+
 setwd("C:/Users/Tina/Documents/faks/2. letnik magisterija/matematika z računalnikom/ProjektMZR")
 
+########################################
+### PODATKI, KI SEM JIH DOBILA S TO KODO:
+load("./data/indeksi.rda")
+load("./data/PLmatrike.rda")
+load("./data/Mvrednost.rda")
+load("./data/Mdonos.rda")
+load("./data/M.rda")
+load("./data/M_SP.rda")
+load("./data/M_SP_donos.rda")
+#######################################
+
+## PODATKI, KI JIH POTREBUJEM
 # podatki za close vrednost za vse papirje, ki so dovolj dolgo v S&P, od 3.1.2000 do 1.11.2013
-# load("./data/data.rda")
 load("./data/podatki.rda")
+
+# podatki morajo biti v spremenljivki data!!!
 data = podatki
 
-# za podatke izračunam indekse: SMA5, 25, 50, 150, RSI 2, 14, bollinger za n = 20 in faktor = 2
+## POŽENI KODO V strategije.R !
+
+## KNJIŽNICE, KI JIH POTREBUJEM
+library(TTR)
+
+# za podatke izračunam indekse: SMA5, 25, 50, 150, RSI2, 14, bollinger za n = 20 in faktor = 2
 SMA5 = apply(data, 2, SMA, n = 5)
 SMA25 = apply(data, 2, SMA, n = 25)
 SMA50 = apply(data, 2, SMA, n = 50)
@@ -22,12 +42,11 @@ save(SMA5, SMA25, SMA50, SMA150, RSI2, RSI14, bollinger,
      file = "./data/indeksi.rda")
 
 
-# najprej moraš pognati kodo v strategije.R
-
-# matrika vrednosti za vsak papir v data, za dane strategije
+# za vsako strategijo izračunam dnevne vrednosti za vsak papir
 # vsaka strategija ima svojo matriko, vsak stolpec v eni matriki je en papir
 
-# začnem pri 150, ker imam SMA150, kjer je prvih 150 vrednosti enako NA
+# začnem trgovati pri dnevu 150, ker imam SMA150, kjer je prvih 150 vrednosti enako NA
+# vsakemu papirju na začetku namenim enak delež v portfelju
 zacetek = 150
 budget = 1000
 PLSMA5 = sapply(1:ncol(data), 
@@ -60,9 +79,7 @@ PLrandom = sapply(1:ncol(data),
 save(PLSMA5, PLSMA25, PLSMA50, PLSMA150, PLRSI2, PLRSI14, PLbuyHold, PLbollinger, PLrandom, 
      file = "./data/PLmatrike.rda")
 
-load("./data/PLmatrike.rda")
-
-# vsota vrednosti vseh papirjev papirjev za dane strategije
+# izračunam dnevne vrednosti celotnega portfelja za vsako strategijo
 sumSMA5 = apply(PLSMA5, 1, sum, na.rm=TRUE)
 sumSMA25 = apply(PLSMA25, 1, sum, na.rm=TRUE)
 sumSMA50 = apply(PLSMA50, 1, sum, na.rm=TRUE)
@@ -77,24 +94,24 @@ sumBollinger = apply(PLbollinger, 1, sum, na.rm=TRUE)
 
 sumRandom = apply(PLrandom, 1, sum, na.rm=TRUE)
 
-
 # te vsote združim v matriko M:
 Mvrednost = cbind(sumSMA5, sumSMA25, sumSMA50, sumSMA150, 
           sumRSI2, sumRSI14, sumBuyHold, sumBollinger, sumRandom)
 
-# izračunam donos na vsoti vrednosti
+# izračunam stopnjo donosa portfelja za vsako strategijo
 Mdonos = apply(Mvrednost, 2, function(X) sapply(2:length(X), function(i) X[i]/X[i-1]))
 
-
-# matriki M in Mdonos shranim
+# matriki Mvrednost in Mdonos shranim
 save(Mvrednost, file = "./data/Mvrednost.rda")
 save(Mdonos, file = "./data/Mdonos.rda")
 
+# izračunam donos portfelja (stopnja donosa - 1)
 M = Mdonos-1
 
 #odstranim prvih 150 vrstic, ki so NA (ker je začetek 150)
 M = M[-c(1:150),]
 
+# shranim M
 save(M, file = "./data/M.rda")
 
 #################################
@@ -123,19 +140,10 @@ random_SP = randomStrategy(SP, zacetek, budget*ncol(data))
 M_SP = cbind(SMA5_SP, SMA25_SP, SMA50_SP, SMA150_SP, 
           RSI2_SP, RSI14_SP, buyHold_SP, bollinger_SP, random_SP)
 
-# izračunam donose za SP
+# izračunam stopnja donosa za SP
 M_SP_donos = apply(M_SP, 2, function(X) sapply(2:length(X), function(i) X[i]/X[i-1]))
 
 # matriki M_SP in M_SP_donos shranim
 save(M_SP, file = "./data/M_SP.rda")
 save(M_SP_donos, file = "./data/M_SP_donos.rda")
 
-
-################ SHRANJENI PODATKI:
-load("./data/indeksi.rda")
-load("./data/PLmatrike.rda")
-load("./data/Mvrednost.rda")
-load("./data/Mdonos.rda")
-load("./data/M_SP.rda")
-load("./data/M_SP_donos.rda")
-load("./data/M.rda")
