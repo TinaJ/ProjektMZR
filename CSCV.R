@@ -136,8 +136,8 @@ CSCV = function(M, S, datoteka = ""){
 
   ## SHRANIM VSE ZGENERIRANE SPREMENLJIVKE, če je podana datoteka:
   if (datoteka != "") {
-    print("Shranjujem zgenerirane spremenljivke")
-    save(Cs, Rji, nji, Rbars, omega, lambda, f, fi, file = datoteka)
+    print("Shranjujem M, S, Rji, nji, Rbars, omega, lambda, f, fi")
+    save(M, S, Rji, nji, Rbars, omega, lambda, f, fi, file = datoteka)
   }
   
   ## vrne PBO

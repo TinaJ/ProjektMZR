@@ -97,6 +97,9 @@ sumRandom = apply(PLrandom, 1, sum, na.rm=TRUE)
 # te vsote združim v matriko M:
 Mvrednost = cbind(sumSMA5, sumSMA25, sumSMA50, sumSMA150, 
           sumRSI2, sumRSI14, sumBuyHold, sumBollinger, sumRandom)
+colnames(Mvrednost) = c("SMA5", "SMA25", "SMA50", "SMA150", 
+                        "RSI2", "RSI14", "BuyHold", "Bollinger", "Random")
+rownames(Mvrednost) = rownames(data)
 
 # izračunam stopnjo donosa portfelja za vsako strategijo
 Mdonos = apply(Mvrednost, 2, function(X) sapply(2:length(X), function(i) X[i]/X[i-1]))
@@ -139,6 +142,7 @@ random_SP = randomStrategy(SP, zacetek, budget*ncol(data))
 # vrednosti združim v matriko M_SP:
 M_SP = cbind(SMA5_SP, SMA25_SP, SMA50_SP, SMA150_SP, 
           RSI2_SP, RSI14_SP, buyHold_SP, bollinger_SP, random_SP)
+rownames(M_SP) = rownames(SP)
 
 # izračunam stopnja donosa za SP
 M_SP_donos = apply(M_SP, 2, function(X) sapply(2:length(X), function(i) X[i]/X[i-1]))
