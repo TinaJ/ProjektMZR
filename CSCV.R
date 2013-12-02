@@ -96,15 +96,24 @@ CSCV = function(M, S, datoteka = ""){
   # omega = rank(Rbar)[n]/length(Rbar)
   ## za vsak stolpec v Rbars (vsako kombinacijo) določim omego:
   omega = c()
-  for(i in 1:ncol(Rbars)){
-    if (i %in% seq(from=1, to = ncol(Rbars), by = 200)) {
+#   for(i in 1:ncol(Rbars)){
+#     if (i %in% seq(from=1, to = ncol(Rbars), by = 200)) {
+#       print(i)
+#     }
+#     w = rank(Rbars[ , i])[nji[i]]/length(Rbars[ , i])
+#     omega = c(omega, w)
+#   }
+  
+  w1 = function(i){
+    if (i %in% seq(from=1, to = ncol(Rbars), by = 500)) {
       print(i)
     }
-    w = rank(Rbars[ , i])[nji[i]]/length(Rbars[ , i])
-    omega = c(omega, w)
+    return(rank(Rbars[ , i])[nji[i]]/length(Rbars[ , i]))
   }
+  omega = sapply(1:ncol(Rbars), w1)
+
   # omega je vektor dolžine št. kombinacij
-  # vsak element je relativni rank strategije n v Rbar zaeno kombinacijo
+  # vsak element je relativni rank strategije n v Rbar za eno kombinacijo
   
   
   ## g.) definiram logit:

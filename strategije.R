@@ -49,7 +49,7 @@ SMAstrategy = function(close, SMAn, n, zacetek=1, budget = 1000){
     
     # glede na to ali trgujem ali ne, določim vrednost
     vrednost[i] = value(trguj[i], close[i], close[i-1], vrednost[i-1])
-    
+  }  
   return(vrednost)
 }
 
@@ -91,7 +91,7 @@ RSIstrategy = function(close, RSIn, n, zacetek = 1, budget = 1000){
     
     # glede na to ali trgujem ali ne, določim vrednost
     vrednost[i] = value(trguj[i], close[i], close[i-1], vrednost[i-1])
-    
+  }
   return(vrednost)
 }
 
@@ -112,7 +112,7 @@ BuyHoldStrategy = function(close, zacetek = 1, budget = 1000){
   for (i in (zacetek+1) : length(close)){   
     # določim vrednost buy & hold strategije (vedno trgujem)
     vrednost[i] = value(1, close[i], close[i-1], vrednost[i-1])
-    
+  } 
   return(vrednost)
 }
 
@@ -152,7 +152,7 @@ BollingerStrategy = function(close, upBand, lowBand, n, zacetek = 1, budget = 10
     
     # glede na to ali trgujem ali ne, določim vrednost
     vrednost[i] = value(trguj[i], close[i], close[i-1], vrednost[i-1])
-
+  }
   return(vrednost)
 }
 
@@ -177,7 +177,7 @@ randomStrategy = function(close, zacetek = 1, budget = 1000){
   for (i in (zacetek+1) : length(close)){    
     # določim vrednost strategije
     vrednost[i] = value(trguj[i], close[i], close[i-1], vrednost[i-1])
-    
+  }
   return(vrednost)
 }
   

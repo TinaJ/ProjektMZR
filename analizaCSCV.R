@@ -2,8 +2,12 @@
 
 setwd("C:/Users/Tina/Documents/faks/2. letnik magisterija/matematika z računalnikom/ProjektMZR")
 
-load("./data/M.rda")
+########################################
+### PODATKI, KI SEM JIH DOBILA S TO KODO:
+load("./data/analiza.rda")
+#######################################
 
+################
 load("./data/CSCV.rda")
 M1 = M
 T1 = nrow(M1)
@@ -149,10 +153,17 @@ table(nji6)
 colnames(M6)[as.numeric(names(which.max(table(nji6))))]
 PBO6
 
-
+# shranim podatke analize
+save(M1, T1, od1, do1, S1, nji1, PBO1,
+     M2, T2, od2, do2, S2, nji2, PBO2,
+     M3, T3, od3, do3, S3, nji3, PBO3, 
+     M4, T4, od4, do4, S4, nji4, PBO4, 
+     M5, T5, od5, do5, S5, nji5, PBO5,
+     M6, T6, od6, do6, S6, nji6, PBO6, file = "./data/analiza.rda")
 
 ##############
 # sharpe za vsako strategijo na vseh podatkih
+load("./data/M.rda")
 Msharpe = apply(M, 2, function(x) mean(x)/sd(x))
 Msharpe
 which.max(Msharpe)

@@ -44,16 +44,17 @@ HoldOut = function(M) {
 ##################
 # holdout na celi M
 M1 = M[1:3320, ]
-MCHoldOut1 = c()
-for (i in 1:100000){
+f1 = function(i) {
   if (i %in% seq(from = 1, to = 100000, by = 500)){
     print(i)
   }
-  MCHoldOut1 = rbind(MCHoldOut1, HoldOut(M1))
+  return(HoldOut(M1))
 }
+MCHoldOut1 = sapply(1:100000, f1)
+
 
 ## verjetnost prekomernega prileganja izračunam kot št. poskusov, ko je bilo prekomerno prileganje / št. vseh poskusov
-PBO1 = sum(MCHoldOut1[, 2])/nrow(MCHoldOut1)
+PBO_HO1 = sum(MCHoldOut1[, 2])/nrow(MCHoldOut1)
 
 #################
 ## holdout na zadnjih 5 letih matrike M
@@ -68,7 +69,7 @@ for (i in 1:100000){
 }
 
 ## verjetnost prekomernega prileganja izračunam kot št. poskusov, ko je bilo prekomerno prileganje / št. vseh poskusov
-PBO2 = sum(MCHoldOut2[, 2])/nrow(MCHoldOut2)
+PBO_HO2 = sum(MCHoldOut2[, 2])/nrow(MCHoldOut2)
 
 #################
 ## holdout na prvih 5 letih matrike M
@@ -83,23 +84,23 @@ for (i in 1:100000){
 }
 
 ## verjetnost prekomernega prileganja izračunam kot št. poskusov, ko je bilo prekomerno prileganje / št. vseh poskusov
-PBO3 = sum(MCHoldOut3[, 2])/nrow(MCHoldOut3)
+PBO_HO3 = sum(MCHoldOut3[, 2])/nrow(MCHoldOut3)
 
 
 ######################
 # analiza hold out
-PBO1
+PBO_HO1
 table(MCHoldOut1[,1])
 colnames(M1)[as.numeric(names(which.max(table(MCHoldOut1[,1]))))]
 
-PBO2
+PBO_HO2
 table(MCHoldOut2[,1])
 colnames(M2)[as.numeric(names(which.max(table(MCHoldOut2[,1]))))]
 
-PBO3
+PBO_HO3
 table(MCHoldOut3[,1])
 colnames(M3)[as.numeric(names(which.max(table(MCHoldOut3[,1]))))]
 
 
 ### shranim MCHoldOut in PBO za vse tri poskuse
-save(MCHoldOut1, PBO1, MCHoldOut2, PBO2, MCHoldOut3, PBO3, file = "./data/HoldOut.rda")
+save(MCHoldOut1, PBO_HO1, MCHoldOut2, PBO_HO2, MCHoldOut3, PBO_HO3, file = "./data/HoldOut.rda")
