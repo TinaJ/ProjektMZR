@@ -4,27 +4,12 @@ setwd("C:/Users/Tina/Documents/faks/2. letnik magisterija/matematika z računaln
 
 ########################################
 ### PODATKI, KI SEM JIH DOBILA S TO KODO:
-load("./data/SP.rda")
 load("./data/SP500.rda")
 load("./data/podatki.rda")
 #######################################
 
 ## KNJIŽNICE, KI JIH POTEBUJEM
 library(fImport) 
-
-#### PODATKI ZA INDEKS SP500
-SP = yahooSeries("^GSPC", from = "2000-01-01", to = "2013-11-01")
-
-# potrebujem samo close vrednosti:
-SP = SP[, 1]
-
-# nekaj o podatkih
-sum(is.na(SP))
-# => ni NA-jev
-
-# shranim podatke
-save(SP, file = "./data/SP.rda")
-
 
 ##### PODATKI ZA VSE PAPIRJE V INDESKU SP500
 
