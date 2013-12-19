@@ -14,8 +14,11 @@ load("./data/CSCV5letS10.rda")
 load("./data/CSCVprvih5letS10.rda")
 #######################################
 
-## PODATKI, KI JIH POTREBUJEM: matrika M
-load("./data/M.rda")
+## PODATKI, KI JIH POTREBUJEM: dnevni donosi portfelja
+load("./data/dnevniDonosiPortfelja.rda")
+
+# matrika M
+M = dnevniDonosiPortfelja - 1
 
 ####################
 ## test funkcije CSCV na majhni matriki

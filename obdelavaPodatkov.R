@@ -19,8 +19,8 @@ papirji = readLines(con)
 close(con)
 
 ## če še nimam podatkov, naložim podatke za teh 500 papirjev iz yahooja in jih shranim v SP500.rda
-SP500 = yahooSeries(papirji, from = "2000-01-01", to = "2013-11-01")
-save(SP500,file="./data/SP500.rda")
+# SP500 = yahooSeries(papirji, from = "2000-01-01", to = "2013-11-01")
+# save(SP500,file="./data/SP500.rda")
 
 ## potrebujem samo close vrednosti
 imena.Close = sapply(papirji, paste0, ".Close")
@@ -50,7 +50,7 @@ for (i in 1:ncol(podatki)){
 podatki = podatki[, -a]
 
 # ostale NA interpoliram
-podatki = interpNA(podatki)
+podatki = interpNA(podatki, method = "before")
 
 # pogledam, če je še kakšen NA, ker če je na začetku ali na koncu, ga ne interpolira
 sum(is.na(podatki))
