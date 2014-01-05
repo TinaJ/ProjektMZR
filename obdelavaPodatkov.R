@@ -4,12 +4,30 @@ setwd("C:/Users/Tina/Documents/faks/2. letnik magisterija/matematika z računaln
 
 ########################################
 ### PODATKI, KI SEM JIH DOBILA S TO KODO:
+load("./data/SP.rda")
 load("./data/SP500.rda")
 load("./data/podatki.rda")
 #######################################
 
 ## KNJIŽNICE, KI JIH POTEBUJEM
 library(fImport) 
+
+#### PODATKI ZA INDEKS SP500
+SP = yahooSeries("^GSPC", from = "2000-01-01", to = "2014-01-01")
+SP1leto = yahooSeries("^GSPC", from = "2013-01-01", to = "2014-01-01")
+
+# potrebujem samo close vrednosti:
+SP = SP[, 4]
+SP1leto = SP1leto[, 4]
+
+# nekaj o podatkih
+sum(is.na(SP))
+# => ni NA-jev
+
+# shranim podatke
+save(SP, file = "./data/SP.rda")
+save(SP1leto, file = "./data/SP1leto.rda")
+
 
 ##### PODATKI ZA VSE PAPIRJE V INDESKU SP500
 
