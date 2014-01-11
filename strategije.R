@@ -62,7 +62,7 @@ SMAstrategy = function(close, SMAn, n, zacetek=1, budget = 1000){
 ## First Average Loss = Sum of Losses over the past n periods / n
 ## Average Gain = [(previous Average Gain) x (n-1) + current Gain] / n
 ## Average Loss = [(previous Average Loss) x (n-1) + current Loss] / n
-RSIstrategy = function(close, RSIn, n, zacetek = 1, budget = 1000){
+RSIstrategy = function(close, RSIn, n, meja = 30, zacetek = 1, budget = 1000){
   ## close = vektor close cen
   ## RSIn = RSI indeks izračunan na dolžini n
   ## zacetek = dan s katerim začnem trgovati (kateri element v vektorju close je prvi)
@@ -87,7 +87,7 @@ RSIstrategy = function(close, RSIn, n, zacetek = 1, budget = 1000){
   
   for (i in (a+1) : length(close)){
     # določim ali kupim ali ne naredim nič, glede na RSI prejšnjega dne
-    trguj[i] = RSIn[i-1] < 30
+    trguj[i] = RSIn[i-1] < meja
     
     # glede na to ali trgujem ali ne, določim vrednost
     vrednost[i] = value(trguj[i], close[i], close[i-1], vrednost[i-1])

@@ -47,12 +47,13 @@ plot(1:3481, RSI14[, 2], "l")
 lines(1:3481, c(1:3481)*0+30, col = "red")
 
 # koliko trgovanj izvede RSI14 na vseh delnicah
-sum(RSI14 < 30, na.rm = TRUE)
+sum(RSI14 < 35, na.rm = TRUE)
 
-
+sum(RSI2 <30, na.rm = TRUE)
 
 ########### NARIŠEM SP za zadnje leto IN NJEGOVE INDIKATORJE
 library(TTR)
+load("./data/SP1leto.rda")
 SP.SMA5 = SMA(SP1leto, n = 5)
 SP.SMA25 = SMA(SP1leto, n = 25)
 SP.SMA50 = SMA(SP1leto, n = 50)
@@ -69,7 +70,7 @@ abline(h = 30, col = "red")
 
 SP.Bollinger = as.timeSeries(BBands(SP1leto, n = 20, sd = 1))
 
-plot(SP1leto)
+plot(SP1leto, xlab = "Čas", ylab = "Vrednost", main = "SP500 & Bollingerjevi pasovi")
 lines(SP.Bollinger[,1], col = "blue")
 lines(SP.Bollinger[,2], col = "green")
 lines(SP.Bollinger[,3], col = "red")

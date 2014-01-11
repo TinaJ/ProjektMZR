@@ -51,9 +51,9 @@ vrednostiSMA150 = sapply(1:ncol(data),
                   function(i) SMAstrategy(data[ , i], SMA150[ , i], 150, zacetek, budget))
 
 vrednostiRSI2 = sapply(1:ncol(data), 
-                function(i) RSIstrategy(data[ , i], RSI2[ , i], 2, zacetek, budget))
+                function(i) RSIstrategy(data[ , i], RSI2[ , i], 2, meja = 30, zacetek, budget))
 vrednostiRSI14 = sapply(1:ncol(data), 
-                 function(i) RSIstrategy(data[ , i], RSI14[ , i], 14, zacetek, budget))
+                 function(i) RSIstrategy(data[ , i], RSI14[ , i], 14, meja = 40, zacetek, budget))
 
 vrednostiBuyHold = sapply(1:ncol(data), 
                    function(i) BuyHoldStrategy(data[,i], zacetek, budget))
