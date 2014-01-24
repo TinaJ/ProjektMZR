@@ -1,11 +1,13 @@
 ####### TRGOVALNE STRATEGIJE
-# v vseh strategijah samo kupujem, nič ne prodajam
 # kot rezultat strategije, vrnem dnevne vrednosti
+# ko kupim delnico, ves razpoložljiv denar za dano delnico investiram vanjo
+# ko prodam delnico, prodam vse kar jih imam, ta denar držim dokler ni nakupnega signala za to delnico
 
 ### VREDNOST STRATEGIJE:
-# če kupiš, je vrednost strategije close tistega dne / close prejšnjega dne * vrednost prejšnjega dne
-# če ne kupiš, je enaka vrednsoti prejšnjega dne
-# pri buy & hold je vrednost vedno taka kot, če bi kupil
+# če trguješ, je vrednost strategije close tistega dne / close prejšnjega dne * vrednost prejšnjega dne
+# če ne trguješ, je enaka vrednsoti prejšnjega dne
+# trguješ takrat, ko imaš delnico (jo kupiš, ali pa jo imaš in jo ne prodaš)
+
 value = function(trguj, closeDanes, closeVceraj, vrednostVceraj){
   if (trguj == 1 || trguj == TRUE || trguj == T) {
     vrednostDanes = closeDanes / closeVceraj * vrednostVceraj
@@ -32,19 +34,23 @@ SMAstrategy = function(close, SMAn, n, zacetek=1, budget = 1000){
   vrednost = c()
   
   # če začetek < n začnem pri n, drugače pri začetek
-  # začnem pri dnevu n+1, ker za dneve 1:(n-1) je SMA enak NA
-  if (zacetek > n){
+  # za 1:(n-1) je SMA enak NA
+  if (zacetek >= n){
     a = zacetek
   }
-  else if (zacetek <= n){
+  else if (zacetek < n){
     a = n
   }
   
   # na začetku je vrednost strategije enaka denarju, ki ga imamo na razpolago (budget)
   vrednost[a] = budget
+  # in nimamo delnice
+  trguj[a] = 0
   
+  # začnem pri dnevu a+1, ker za dneve 1:(a-1) je SMA enak NA
   for (i in (a+1) : length(close)){
     # določim ali kupim ali ne naredim nič, glede na close in SMA
+	# delnico imam, če je vrednot včeraj večja od včerajšnje vrednosti SMA
     trguj[i] = close[i-1] > SMAn[i-1]
     
     # glede na to ali trgujem ali ne, določim vrednost
@@ -73,21 +79,36 @@ RSIstrategy = function(close, RSIn, n, meja = 30, zacetek = 1, budget = 1000){
   trguj = c()
   vrednost = c()
   
-  # če začetek < n začnem pri n, drugače pri začetek
-  # začnem pri dnevu n+1, ker za dneve 1:(n-1) je RSIn enak NA
-  if (zacetek > n + 1){
+  # če začetek < n+1 začnem pri n+1, drugače pri začetek
+  # za 1:n je RSIn enak NA
+  if (zacetek >= n+1){
     a = zacetek
   }
-  else if (zacetek < n){
+  else if (zacetek < n+1){
     a = n + 1
   }
   
   # na začetku je vrednost strategije enaka denarju, ki ga imamo na razpolago (budget)
   vrednost[a] = budget
+  # in nimam delnice
+  trguj[a] = 0
   
   for (i in (a+1) : length(close)){
     # določim ali kupim ali ne naredim nič, glede na RSI prejšnjega dne
-    trguj[i] = RSIn[i-1] < meja
+    # in glede na to ali sem prejšnji dan imela delnico
+    # trgujem, oz. držim delnico, če 
+    # - prejšnji dan nisem imela delnice in je vrednost RSI prejšnjega dne pod 30
+    if (trguj[i-1] == 0 && RSIn[i-1] < 30){
+      trguj[i] = 1
+    }
+
+    # - ali prejšnji dan sem imela delnico in je RSI prejšnjega dne pod 70
+    else if (trguj[i-1] == 1 && RSIn[i-1] < 70){
+      trguj[i] = 1
+    }
+    else {
+      trguj[i] = 0
+    }
     
     # glede na to ali trgujem ali ne, določim vrednost
     vrednost[i] = value(trguj[i], close[i], close[i-1], vrednost[i-1])
@@ -135,7 +156,7 @@ BollingerStrategy = function(close, upBand, lowBand, n, zacetek = 1, budget = 10
   vrednost = c()
   
   # če začetek < n začnem pri n, drugače pri začetek
-  # začnem pri dnevu n+1, ker za dneve 1:(n-1) je bollinger indeks enak NA
+  # za 1:(n-1) je bollinger enak NA
   if (zacetek > n){
     a = zacetek
   }
@@ -145,9 +166,25 @@ BollingerStrategy = function(close, upBand, lowBand, n, zacetek = 1, budget = 10
   
   # na začetku je vrednost strategije enaka denarju, ki ga imamo na razpolago (budget)
   vrednost[a] = budget
+  # in nimam delnice
+  trguj[a] = 0
   
   for (i in (a+1) : length(close)){
-    # določim ali kupim ali ne naredim nič, glede na close in lowBand
+    # določim ali kupim ali ne naredim nič, glede na close, lowBand in upBand
+	# in glede na to ali sem prejšnji dan imela delnico
+    # trgujem, oz. držim delnico, če 
+    # - prejšnji dan nisem imela delnice in je vrednost prejšnjega dne pod spodnjim pasom prejšnjega dne
+    if (trguj[i-1] == 0 && close[i-1] < lowBand[i-1]){
+      trguj[i] = 1
+    }
+
+    # - ali prejšnji dan sem imela delnico in je vrdnost prejšnjega dne pod zgornjim pasom prejšnjega dne
+    else if (trguj[i-1] == 1 && close[i-1] < upBand[i-1]){
+      trguj[i] = 1
+    }
+    else {
+      trguj[i] = 0
+    }
     trguj[i] = close[i-1] < lowBand[i-1]
     
     # glede na to ali trgujem ali ne, določim vrednost
@@ -158,7 +195,7 @@ BollingerStrategy = function(close, upBand, lowBand, n, zacetek = 1, budget = 10
 
 
 ## 5. Random
-## strategija: slučajno izberi ali kupiš, prodaš ali nič ne narediš
+## strategija: slučajno izberi ali kupiš, prodaš ali nič ne narediš oz. ali imaš delnico ali je nimaš
 randomStrategy = function(close, zacetek = 1, budget = 1000){
   ## close = vektor close cen
   ## zacetek = dan s katerim začnem trgovati (kateri element v vektorju close je prvi)
@@ -181,3 +218,6 @@ randomStrategy = function(close, zacetek = 1, budget = 1000){
   return(vrednost)
 }
   
+  
+## 6. OVERFIT 1:
+## strategija: delnico imam, samo, če vem, da bo cena v enem dnevu zrasla, prihodnost poznam samo od 1.1.2005 do 1.1.2006
