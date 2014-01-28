@@ -105,9 +105,9 @@ CSCV = function(M, S, datoteka = ""){
 #   }
   
   w1 = function(i){
-    if (i %in% seq(from=1, to = ncol(Rbars), by = 500)) {
-      print(i)
-    }
+#     if (i %in% seq(from=1, to = ncol(Rbars), by = 500)) {
+#       print(i)
+#     }
     return(rank(Rbars[ , i])[nji[i]]/length(Rbars[ , i]))
   }
   omega = sapply(1:ncol(Rbars), w1)

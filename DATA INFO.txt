@@ -1,0 +1,5 @@
+DATA INFO
+Strategije: SMA5, SMA25, SMA50, SMA150, RSI2, RSI14, Bollinger1sd, Buy&Hold, Random
+13 in 5 let
+CSCV na 5 let za vse kombinacije
+CSCV na 13 let, samo za kombinaciji SMA25, RSI2, RSI14, Bollinger, Random ter SMA50, SMA150, RSI14, BuyHold, Random
