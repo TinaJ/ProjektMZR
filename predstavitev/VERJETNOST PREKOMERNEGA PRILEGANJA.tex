@@ -115,26 +115,12 @@ $$RS = \frac{\textrm{povprečna vrednost pozitivnih period}}{\textrm{povprečna 
 \end{frame}
 
 \begin{frame}
-\frametitle{Verejtnot prekomernega prileganja}
+\frametitle{Metoda kombinatoričnega simetričnega navzkrižnega preverjanja}
 \begin{itemize}
-\item Naj bo $R: \mathbb{R}^T \rightarrow \mathbb{R}$ funkcija, ki za dano časovno vrsto uspešnosti $n$-te strategije (velikosti $T$) vrne realno mero uspešnosti $R_n$.
-\item Za dano množico $N$ strategij, naj bo $\Omega$ vzorčni prostor vseh možnih rangiranj strategij glede na $R_n$ (v naraščajočem redu). 
-\item Naj bo $\mathcal{F}$ množica dogodkov, ki vsebuje sigma algebro $\Omega$. Natančneje, eden izmed elementov v $\mathcal{F}$ je podmnožica vseh izidov v $\Omega$ kjer je $n$-ta strategija rangirana v prvi polovici (pod mediano). Označimo ta dogodek z $\underline{\mathcal{F}_n} \in \mathcal{F}, \ \forall \ n = 1,\dots, N$.
-\item Naj bo $Prob$ verjetnostna mera na $\mathcal{F}$. Na primer, verjetnost, da je uspešnost $n$-te strategije pod mediano vseh uspešnosti, ustreza relativni frekvenci pri kateri se zgodi katerikoli izid v $\underline{\mathcal{F}_n}$.
+\item Prekomerno prileganje: najboljša strategija na učni množici je zelo slaba na testni množici
+\item Verjetnost prekomernega prileganja
+\item Sharpovo razmerje: mera uspešnosti strategije
 \end{itemize}
-
-\end{frame}
-
-
-\begin{frame}
-\begin{block}{Prekomerno prileganje zgodovinskega preverjanja}
-Naj bo $n^*$ najboljša strategija na učni množici, to je $R_n^* \ge R_n$, za vsak $n = 1,\dots,N$. Označimo z $\overline{R_n^*}$ uspešnost strategije $n^*$ na testni množici. Naj bo $Me[\overline{R}]$ mediana uspešnosti vseh strategij na testni množici. Potem rečemo, da se proces izbire strategije prekomerno prilega, če za strategijo $n^*$ z najvišjim rangom na učni množici velja: $$E[\overline{R_{n}^{*}}] < Me[\overline{R}]$$
-\end{block}
-
-\begin{block}{Verjetnost prekomernega prileganja}
-Naj bo $n^*$ najboljša strategija na učni množici. Ker $n^*$ ni nujno najboljša strategija na testni množici, obstaja pozitivna verjetnost, da je $\overline{R_n^*} < Me[\overline{R}]$. Verjetnost, da se izbrana strategija $n^*$ prekomerno prilega, definiramo kot: $$PBO \equiv Prob[\overline{R_n^*} < Me[\overline{R}]]$$
-\end{block}
-
 \end{frame}
 
 
@@ -165,51 +151,87 @@ Naj bo $n^*$ najboljša strategija na učni množici. Ker $n^*$ ni nujno najbolj
 \end{frame}
 
 
+%\begin{frame}
+%\frametitle{Rezultati}
+%{\footnotesize
+%\begin{tabular}{|p{1.15cm}|p{0.8cm}|p{1.4cm}|p{1.4cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|}
+%\cline{3-7}
+%\multicolumn{2}{c|}{}&\multicolumn{5}{|c|}{\textbf{STRATEGIJE}}\\
+%\cline{3-7}
+%\multicolumn{2}{c|}{} & SMA150 & SMA150 & RSI2 & RSI2 & \multirow{5}{1cm}{vse strategije} \\
+%\multicolumn{2}{c|}{} & RSI14 & RSI14 & Bollinger & Bollinger & \\
+%\multicolumn{2}{c|}{} & Buy\&Hold &  Buy\&Hold  & Random & Random & \\
+%\multicolumn{2}{c|}{} & & SMA50 & & SMA25 & \\
+%\multicolumn{2}{c|}{} & & Random &   & RSI14 &  \\
+%\hline
+%\multirow{2}{*}{\textbf{CSCV}} & 5 let & 0.7953 & 0.8038 & 0.0004 & 0.0026 & 0.1060 \\
+% & 13 let & 0.7416 & 0.7025 & 0.0017 & 0.0039 & 0.0333 \\
+%\hline
+%\multirow{2}{*}{\textbf{Hold-out}} & 5 let & 3 & 5 & 3 & 5 & vse \\
+% & 13 let & 3 & 5 & 3 & 5 & vse \\
+% \hline
+%\end{tabular}
+%}
+%\end{frame}
+
 \begin{frame}
 \frametitle{Rezultati}
-{\footnotesize
-\begin{tabular}{|p{1.15cm}|p{0.8cm}|p{1.4cm}|p{1.4cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|}
-\cline{3-7}
-\multicolumn{2}{c|}{}&\multicolumn{5}{|c|}{\textbf{STRATEGIJE}}\\
-\cline{3-7}
-\multicolumn{2}{c|}{} & SMA150 & SMA150 & RSI2 & RSI2 & \multirow{5}{1cm}{vse strategije} \\
-\multicolumn{2}{c|}{} & RSI14 & RSI14 & Bollinger & Bollinger & \\
-\multicolumn{2}{c|}{} & Buy\&Hold &  Buy\&Hold  & Random & Random & \\
-\multicolumn{2}{c|}{} & & SMA50 & & SMA25 & \\
-\multicolumn{2}{c|}{} & & Random &   & RSI14 &  \\
+\begin{tabular}{|c|c|c|c|c|}
 \hline
-\multirow{2}{*}{\textbf{CSCV}} & 5 let & 0.7953 & 0.8038 & 0.0004 & 0.0026 & 0.1060 \\
- & 13 let & 0.7416 & 0.7025 & 0.0017 & 0.0039 & 0.0333 \\
+SMA150 & SMA150 & RSI2 & RSI2 & \multirow{5}{*}{vse strategije} \\
+RSI14 & RSI14 & Bollinger & Bollinger & \\
+Buy\&Hold &  Buy\&Hold  & Random & Random & \\
+& SMA50 & & SMA25 & \\
+ & Random &   & RSI14 &  \\
 \hline
-\multirow{2}{*}{\textbf{Hold-out}} & 5 let & 3 & 5 & 3 & 5 & vse \\
- & 13 let & 3 & 5 & 3 & 5 & vse \\
+ 0.7953 & 0.8038 & 0.0004 & 0.0026 & 0.1060 \\
  \hline
 \end{tabular}
-}
 \end{frame}
 
-\begin{frame}
-\includegraphics[width=11cm]{majhen_overfit_3strategije_5let.png}
-\end{frame}
 
-\begin{frame}
-\includegraphics[width=11cm]{majhen_overfit_3strategije_13let.png}
-\end{frame}
 
 \begin{frame}
 \includegraphics[width=11cm]{velik_overfit_3strategije_5let.png}
 \end{frame}
 
 \begin{frame}
-\includegraphics[width=11cm]{velik_overfit_3strategije_13let.png}
+\includegraphics[width=11cm]{velik_overfit_5strategij_5let.png}
 \end{frame}
+
+%\begin{frame}
+%\includegraphics[width=11cm]{velik_overfit_3strategije_13let.png}
+%\end{frame}
+
+%\begin{frame}
+%\includegraphics[width=11cm]{velik_overfit_5strategij_13let.png}
+%\end{frame}
+
+\begin{frame}
+\includegraphics[width=11cm]{majhen_overfit_3strategije_5let.png}
+\end{frame}
+
+\begin{frame}
+\includegraphics[width=11cm]{majhen_overfit_5strategij_5let.png}
+\end{frame}
+
+%\begin{frame}
+%\includegraphics[width=11cm]{majhen_overfit_3strategije_13let.png}
+%\end{frame}
+
+%\begin{frame}
+%\includegraphics[width=11cm]{majhen_overfit_5strategij_13let.png}
+%\end{frame}
 
 \begin{frame}
 \includegraphics[width=11cm]{kapital_5let.png}
 \end{frame}
 
-\begin{frame}
-\includegraphics[width=11cm]{kapital_13let.png}
-\end{frame}
+%\begin{frame}
+%\includegraphics[width=11cm]{kapital_13let.png}
+%\end{frame}
+
+
+
 
 \end{document} 
