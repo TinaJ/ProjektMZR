@@ -51,10 +51,10 @@ load("./data/equityVseStrategije-5let.rda")
 
 ## vse strategije za 5 let
 equity = as.timeSeries(equityVseStrategije)
-plot(equity, plot.type = "single", col = c("black", "aquamarine", "blue", "green", "pink", 
+plot(equity, plot.type = "single", col = c("black", "aquamarine", "blue", "green", "darkgreen", 
                                            "brown", "orange", "purple", "red"), 
-     at = "auto", xlab = "Čas", ylab = "Kapital", main = "Kapital za posamezno strategijo")
-legend(x = "topleft", col = c("black", "aquamarine", "blue", "green", "pink", "brown", "orange", "purple", "red"),
+     at = "auto", xlab = "Čas", ylab = "Vrednost", main = "Vrednost portfelja")
+legend(x = "topleft", col = c("black", "aquamarine", "blue", "green", "darkgreen", "brown", "orange", "purple", "red"),
        legend = colnames(equityVseStrategije), lty = 1)
 
 #majhen overfit
@@ -66,7 +66,7 @@ legend(x = "topleft", col = c("black", "blue", "green"),
 
 plot(as.timeSeries(equityVseStrategije[, c(2,5,6,8,9)]), plot.type = "single",
      col = c("black", "blue", "green", "purple", "red"), 
-     at = "auto", xlab = "Čas", ylab = "Kapital", main = "Kapital za posamezno strategijo")
+     at = "auto", xlab = "Čas", ylab = "Vrednost", main = "Kapital za posamezno strategijo")
 legend(x = "topleft", col = c("black", "blue", "green", "purple", "red"),
        legend = colnames(equityVseStrategije[, c(2,5,6,8,9)]), lty = 1)
 
@@ -109,3 +109,87 @@ plot(SP1leto, xlab = "Čas", ylab = "Vrednost", main = "SP500 & Bollingerjevi pa
 lines(SP.Bollinger[,1], col = "blue")
 lines(SP.Bollinger[,2], col = "green")
 lines(SP.Bollinger[,3], col = "red")
+
+########################
+########################3
+# Rolling performance graf
+library(PerformanceAnalytics)
+library(quantmod)
+library(timeSeries)
+
+load("./data/equityVseStrategije-5let.rda")
+load("./data/dnevniDonosiPortfelja-5let.rda")
+
+tedenski_donosi = c()
+for (i in 1:9){
+  tedenski_donosi = cbind(tedenski_donosi, weeklyReturn(equityVseStrategije[,i], type='arithmetic'))
+}
+plot(as.timeSeries(tedenski_donosi[,c(5,8,9)]), plot.type = "single", 
+     col = c("black", "red", "green"),
+     main = "Tedenski donosi", 
+     xlab = "Čas", ylab = "Donos")
+legend(x = "bottomright", legend = colnames(equityVseStrategije[, c(5,8,9)]), lty = 1, 
+       col = c("black", "red", "green"))
+
+plot(as.timeSeries(tedenski_donosi[,c(4,6,7)]), plot.type = "single", 
+     col = c("black", "red", "green"), main = "Tedenski donosi", 
+     xlab = "Čas", ylab = "Donos")
+legend(x = "bottomright", legend = colnames(equityVseStrategije[, c(4,6,7)]), lty = 1, 
+       col = c("black", "red", "green"))
+
+mesecni_donosi = c()
+for (i in 1:9){
+  mesecni_donosi = cbind(mesecni_donosi, monthlyReturn(equityVseStrategije[,i], type='arithmetic'))
+}
+plot(as.timeSeries(mesecni_donosi[,c(5,8,9)]), plot.type = "single", 
+     col = c("black", "red", "green"), main = "Mesečni donosi", 
+     xlab = "Čas", ylab = "Donos")
+legend(x = "bottomright", legend = colnames(equityVseStrategije[, c(5,8,9)]), lty = 1, 
+       col = c("black", "red", "green"))
+
+plot(as.timeSeries(mesecni_donosi[,c(4,6,7)]), plot.type = "single", 
+     col = c("black", "red", "green"),
+     main = "Mesečni donosi", 
+     xlab = "Čas", ylab = "Donos")
+legend(x = "bottomright", legend = colnames(equityVseStrategije[, c(4,6,7)]), lty = 1, 
+       col = c("black", "red", "green"))
+
+plot(as.timeSeries(mesecni_donosi[,c(3,4,6,7,9)]), plot.type = "single", 
+     col = c("black", "blue", "green", "pink", "red"), main = "Mesečni donosi", 
+     xlab = "Čas", ylab = "Donos")
+legend(x = "bottomright", legend = colnames(equityVseStrategije[, c(3,4,6,7,9)]), lty = 1, 
+       col = c("black", "blue", "green", "pink", "red"))
+
+plot(as.timeSeries(mesecni_donosi[,c(2,5,6,8,9)]), plot.type = "single", 
+     col = c("black", "blue", "green", "pink", "red"),
+     main = "Mesečni donosi", 
+     xlab = "Čas", ylab = "Donos")
+legend(x = "bottomright", legend = colnames(equityVseStrategije[, c(2,5,6,8,9)]), lty = 1, 
+       col = c("black", "blue", "green", "pink", "red"))
+
+
+c(3,4,6,7,9)
+# # tedenske_razlike = diff(equityVseStrategije, lag = 7)
+# # tedenski_donos = apply(tedenske_razlike, 2, function(X) sapply(2:length(X), function(i) X[i]/X[i-1]))
+# 
+# tedenski_donos = apply(equityVseStrategije, 2, function(X) sapply(8:length(X), function(i) X[i] / X[i-7]))
+# log_tedenski_donos = log(tedenski_donos)
+# plot(as.timeSeries(log_tedenski_donos[,c(5,8,9)]), plot.type = "single")
+# 
+# mesecne_razlike = diff(equityVseStrategije, lag = 30)
+# mesecni_donos = apply(equityVseStrategije, 2, function(X) sapply(31:length(X), function(i) X[i]/X[i-30]))
+# log_mesecni_donos = log(mesecni_donos)
+# plot(as.timeSeries(mesecni_donos[,c(5,8,9)]-1), plot.type = "single")
+# 
+# 
+# library(TTR)
+# povprecen_tedenski_donos = apply(dnevniDonosiPortfelja, 2, SMA, n = 7)
+# plot(as.timeSeries(povprecen_tedenski_donos[,c(5,8,9)]), plot.type = "single")
+# 
+# povprecen_mesecni_donos = apply(dnevniDonosiPortfelja, 2, SMA, n = 30)
+# plot(as.timeSeries(povprecen_mesecni_donos[,c(5,8,9)]), plot.type = "single")
+# 
+# plot(as.timeSeries(log(povprecen_tedenski_donos[,c(4,6,7)]), plot.type = "single")
+# plot(as.timeSeries(log(povprecen_mesecni_donos[,c(4,6,7)])), plot.type = "single")
+
+     

@@ -14,7 +14,7 @@
 \usetheme{Warsaw}
 \setbeamercovered{transparent}
 %\usecolortheme{crane}
-\title[Verjetnost prekomernega prileganja]{VERJETNOST PREKOMERNEGA PRILEGNJA}
+\title[Verjetnost prekomernega prileganja]{VERJETNOST PREKOMERNEGA PRILEGANJA}
 \author[Tina Janša]{Tina Janša}
 
 
@@ -30,13 +30,13 @@
 \frametitle{Uvod}
 
 %\begin{block}{Naloga}
-%Za dani nabor trgovalnih strategij izračunaj verjetnost prekomernega prileganja z novo metodo kombinatoričnega simetričnega navzkrižnega preverjanja.
+%Za dani nabor trgovalnih strategij izračunaj verjetnost prekomernega prileganja z novo metodo kombinatoričnega simetričnega prečnega preverjanja.
 %\end{block}
 %\vspace{0.5cm}
 \begin{itemize}
-\item Pridobitev podatkov \pause
+\item Obdelava podatkov \pause
 \item Implementacija trgovalnih strategij 
-\item Implementacija metode kombinatoričnega simetričnega navzkrižnega preverjanja
+\item Implementacija metode kombinatoričnega simetričnega prečnega preverjanja
 \end{itemize}
 
 \end{frame}
@@ -50,8 +50,8 @@
 \begin{frame}
 \frametitle{Trgovalne strategije}
 \begin{itemize}
-\item Random \pause
-\item Buy \& Hold \pause
+\item Random
+\item Buy \& Hold
 \item SMA
 \item RSI
 \item Bollinger
@@ -71,25 +71,36 @@
 \end{frame}
 
 
+%\begin{frame}
+%\frametitle{RSI - Indeks relativne moči}
+%\begin{columns}
+%\begin{column}{5cm}
+%\begin{itemize}
+%\item Nakupni signal: RSI < 30
+%\item Prodajni signal: RSI > 70
+%\end{itemize}
+%
+%$$RSI = 100 - \frac{100}{1-RS}$$
+%
+%\end{column}
+%
+%\begin{column}{6.3cm}
+%\includegraphics[width=6.3cm]{RSI2.png}
+%\end{column}
+%\end{columns}
+%\vspace{0.5cm}
+%$$RS = \frac{\textrm{povprečna vrednost pozitivnih period}}{\textrm{povprečna vrednost negativnih period}}$$
+%\end{frame}
+
 \begin{frame}
 \frametitle{RSI - Indeks relativne moči}
-\begin{columns}
-\begin{column}{5cm}
 \begin{itemize}
 \item Nakupni signal: RSI < 30
 \item Prodajni signal: RSI > 70
 \end{itemize}
 
-$$RSI = 100 - \frac{100}{1-RS}$$
+\includegraphics[width=10cm]{RSI2.png}
 
-\end{column}
-
-\begin{column}{6.3cm}
-\includegraphics[width=6.3cm]{RSI2.png}
-\end{column}
-\end{columns}
-\vspace{0.5cm}
-$$RS = \frac{\textrm{povprečna vrednost pozitivnih period}}{\textrm{povprečna vrednost negativnih period}}$$
 \end{frame}
 
 
@@ -115,39 +126,38 @@ $$RS = \frac{\textrm{povprečna vrednost pozitivnih period}}{\textrm{povprečna 
 \end{frame}
 
 \begin{frame}
-\frametitle{Metoda kombinatoričnega simetričnega navzkrižnega preverjanja}
+\frametitle{Prekomerno prileganje}
 \begin{itemize}
-\item Prekomerno prileganje: najboljša strategija na učni množici je zelo slaba na testni množici
-\item Verjetnost prekomernega prileganja
-\item Sharpovo razmerje: mera uspešnosti strategije
+\item Sharpovo razmerje: mera uspešnosti strategije ($\frac{\mu}{\sigma}$) \pause
+\item Prekomerno prileganje: Naj bo n najboljša strategija na učni množici. Proces izbire strategije se prekomerno prilega, če za strategijo n velja, da je njena pričakovana uspešnost na testni množici manjša od mediane uspešnosti vseh strategij na testni množici.
+\pause
+\item Verjetnost prekomernega prileganja je verjetnost, da je uspešnost strategije n na testni množici manjša od mediane uspešnosti vseh strategij na testni množici. 
 \end{itemize}
 \end{frame}
 
 
-\begin{frame}[allowframebreaks,t]
-\frametitle{CSCV - Metoda kombinatoričnega simetričnega prečnega preverjanja}
-\begin{enumerate}
-\item	Konstruiramo matriko $M$ iz časovne vrste uspešnosti $N$ strategij. $M$ je matrika velikosti $T\times N$. 
-\item	$M$ razdelimo po vrsticah na $S$ disjunktnih podmatrik enakih velikosti. Vsaka od teh podmatrik $M_s$, $s=1,\dots,S$, je velikosti $\frac{T}{S} \times N$.
-\item	Tvorimo kombinacije $\frac{S}{2}$ podmatrik $M_s$, kar nam da ${S \choose \frac{S}{2}}$ kombinacij $C_s$. 
-\item	Za vsako kombinacijo $c \in C_s$ naredimo naslednje:
+\begin{frame}
+\frametitle{Metoda kombinatoričnega simetričnega prečnega preverjanja}
 \begin{itemize}
-\item	Konstruiramo učno množico $J$ tako da združimo $\frac{S}{2}$ podmatrik $M_s$, ki so v kombinaciji $c$. $J$ je matrika velikosti $\frac{T}{2} \times N$.
-\item	Konstruiramo testno množico $\overline{J}$ iz podmatrik, ki niso v $J$.
-\item	Konstruiramo vektor $R$, kjer $n$-ti element pove uspešnost $n$-tega stolpca matrike $J$.
-\item	Določimo element $n^*$ tako, da je $R_n \leq R_n^*$, $\forall n = 1,\dots,N$.
-\item	Konstruiramo vektor $\overline{R}$, kjer $n$-ti element pove uspešnost $n$-tega stolpca matrike $\overline{J}$.
-\item	Določimo relativni rank $\overline{R_n^*}$ v $\overline{R}$. Označimo ga z $\overline{\omega_c}$, kjer je $\overline{\omega_c} \in (0,1)$. 
-\item	Definiramo logit $\lambda_c = log\frac{\overline{\omega_c}}{1-\overline{\omega_c}}$. $\lambda_c = 0$, ko je $\overline{R_n^*} = Me[\overline{R}]$.
+\item	Dnevni donosi portfelja za N strategij na obdobju dolžine T. 
+\item	Razdelimo na S enako dolgih podobdobij.
+\item	Podobdobja razdelimo na učno in testno množico. 
+\item	Določimo uspešnost strategij na učni in testni množici.
+\item	Za strategijo, ki je najboljša na učni množici (n) določimo relativno uspešnost na testni množici - $\omega \in (0,1)$. 
+\item	Definiramo $\lambda = log\frac{\omega}{1-\omega}$
+\item	Frekvenčna porazdelitev $\lambda$.
+\item Verjetnost prekomernega prileganja je frekvenca negativnih $\lambda$. Označimo jo z $\Phi$.
 \end{itemize}
-\item	Izračunamo porazdelitev rankov testne množice z zbiranjem vseh $\lambda_c$, za $c \in C_s$. $f(\lambda)$ je relativna frekvenca pri kateri se $\lambda$ zgodi na vseh $C_s$, z $\int_{-\infty}^{\infty} f(\lambda)d\lambda = 1$.
-\item Verjetnost prekomernega prileganja lahko ocenimo z $\Phi = \int_{-\infty}^{0}f(\lambda)d\lambda$.
+\end{frame}
+
+\begin{frame}
+\frametitle{Metoda kombinatoričnega simetričnega prečnega preverjanja}
 \begin{itemize}
-\item $\Phi \approx 0$: ni velikega prekomernega prileganja, ker je izbor optimalne strategije na učni množici pripomogel k večji uspešnosti na testni množici.
+\item $\Phi \approx 0$: ni velikega prekomernega prileganja, izbor optimalne strategije na učni množici pripomore k večji uspešnosti na testni množici.
 \item $\Phi = \frac{1}{2}$: zgodovinsko preverjanje se prekomerno prilega do te mere, da postopek izbora optimalne strategije na učni množici ne doda vrednosti.
 \item $\Phi >> \frac{1}{2}$: prekomerno prileganje je tako veliko, da izbor optimalne strategije na učni množici povzroči slabšo pričakovano uspešnost na testni množici, kot bi bila, če bi naključno izbrali eno izmed strategij.
 \end{itemize}
-\end{enumerate}
+
 \end{frame}
 
 
@@ -176,15 +186,15 @@ $$RS = \frac{\textrm{povprečna vrednost pozitivnih period}}{\textrm{povprečna 
 
 \begin{frame}
 \frametitle{Rezultati}
-\begin{tabular}{|c|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|p{1.2cm}|}
 \hline
-SMA150 & SMA150 & RSI2 & RSI2 & \multirow{5}{*}{vse strategije} \\
-RSI14 & RSI14 & Bollinger & Bollinger & \\
-Buy\&Hold &  Buy\&Hold  & Random & Random & \\
-& SMA50 & & SMA25 & \\
- & Random &   & RSI14 &  \\
+\multirow{5}{*}{} & SMA150 & SMA150 & RSI2 & RSI2 & \multirow{5}{1.2cm}{vseh 9 strategij} \\
+& RSI14 & RSI14 & Bollinger & Bollinger & \\
+& Buy\&Hold &  Buy\&Hold  & Random & Random & \\
+& & SMA50 & & SMA25 & \\
+& & Random &   & RSI14 &  \\
 \hline
- 0.7953 & 0.8038 & 0.0004 & 0.0026 & 0.1060 \\
+PBO & 0.7953 & 0.8038 & 0.0004 & 0.0026 & 0.1060 \\
  \hline
 \end{tabular}
 \end{frame}
